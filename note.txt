@@ -1,0 +1,7 @@
+prepare for L6
+
+“baum/baum” ———> "kalnoy/nestedset": "^5.0”,
+
+"arcanedev/settings": "^1.2”, ——> anlutro/l4-settings
+
+zizaco/entrust --> trebol/entrust

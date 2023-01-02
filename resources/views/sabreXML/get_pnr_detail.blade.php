@@ -1,0 +1,20 @@
+@extends('sabreXML.layouts.master')
+@section('content')
+<GetReservationRQ xmlns="http://webservices.sabre.com/pnrbuilder/v1_19" Version="1.19.0">
+			<Locator>{{$requestData->pnr}}</Locator>
+			<RequestType>Stateful</RequestType>
+			<ReturnOptions>
+		<SubjectAreas>
+			<SubjectArea>ACTIVE</SubjectArea>
+			<SubjectArea>ANCILLARY</SubjectArea>
+			<SubjectArea>FARETYPE</SubjectArea>
+			<SubjectArea>FQTV</SubjectArea>
+			<SubjectArea>HEADER</SubjectArea>
+			<SubjectArea>PRICE_QUOTE</SubjectArea>
+			<SubjectArea>TICKETING</SubjectArea>
+		</SubjectAreas>		
+		<ViewName>Default</ViewName>
+		<ResponseFormat>STL</ResponseFormat>
+	</ReturnOptions>
+</GetReservationRQ>
+@endsection
