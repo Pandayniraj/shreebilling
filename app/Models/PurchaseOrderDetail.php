@@ -30,6 +30,10 @@ class PurchaseOrderDetail extends Model
 //        return $this->belongsTo('App\Models\Order', 'order_id');
 //    }
 
+public function units()
+{
+    return $this->belongsTo(\App\Models\ProductsUnit::class, 'units');
+}
     public function isEditable()
     {
         // Protect the admins and users Intakes from editing changes

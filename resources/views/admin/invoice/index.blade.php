@@ -119,9 +119,9 @@
                                 <td>
                                     <a href="/admin/invoice/print/{{$o->id}}" target="_blank" title="print"><i class="fa fa-print"></i></a>
                                     <a href="/admin/invoice/payment/{{$o->id}}" title="Receive Payment"><i class="fa fa-credit-card"></i></a>
-
+                                    {{-- <a href="/admin/invoice/detail/{{ $o->id }}" title="view detail"><i class="fa fa-eye" aria-hidden="true"></i></a>     --}}
                                     <a href="{{ route('admin.invoice.edit',$o->id) }}" title="edit"><i class="fa fa-edit"></i></a>
-
+                                    <a href="/admin/invoice/excel/{{ $o->id }}" title="download excel"><i class="fa fa-table" aria-hidden="true"></i></a>
                                     <a href="{!! route('admin.invoice.confirm-delete', $o->id) !!}" data-toggle="modal" data-target="#modal_dialog" title="{{ trans('general.button.delete') }}"><i class="fa fa-trash deletable"></i></a>
 
                                 </td>

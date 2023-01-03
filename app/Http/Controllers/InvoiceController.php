@@ -107,79 +107,86 @@ class InvoiceController extends Controller
         $outlets = $this->getUserOutlets();
         return view('admin.invoice.index', compact('orders', 'page_title', 'page_description','clients','fiscal_years','outlets'));
     }
-    public function detailindex()
-    {
+    // public function detailindex()
+    // {
 
-        $orders = Invoice::where(function($query){
-                    $start_date = \Request::get('start_date');
-                    $end_date = \Request::get('end_date');
-                    if($start_date && $end_date){
-                        return $query->where('bill_date','>=',$start_date)
-                            ->where('bill_date','<=',$end_date);
-                    }
+    //     $orders = Invoice::where(function($query){
+    //                 $start_date = \Request::get('start_date');
+    //                 $end_date = \Request::get('end_date');
+    //                 if($start_date && $end_date){
+    //                     return $query->where('bill_date','>=',$start_date)
+    //                         ->where('bill_date','<=',$end_date);
+    //                 }
 
-                })
-                ->where(function($query){
-                    $bill_no = \Request::get('bill_no');
-                    if($bill_no){
-                        return $query->where('bill_no',$bill_no);
-                    }
+    //             })
+    //             ->where(function($query){
+    //                 $bill_no = \Request::get('bill_no');
+    //                 if($bill_no){
+    //                     return $query->where('bill_no',$bill_no);
+    //                 }
 
-                })
-                ->where(function($query){
-                    $client_id = \Request::get('client_id');
-                    if($client_id){
-                        return $query->where('client_id',$client_id);
-                    }
-                })
-                ->where(function($query){
-                    $fiscal_year = \Request::get('fiscal_year');
-                    if($fiscal_year){
-                        return $query->where('fiscal_year',$fiscal_year);
-                    }
+    //             })
+    //             ->where(function($query){
+    //                 $client_id = \Request::get('client_id');
+    //                 if($client_id){
+    //                     return $query->where('client_id',$client_id);
+    //                 }
+    //             })
+    //             ->where(function($query){
+    //                 $fiscal_year = \Request::get('fiscal_year');
+    //                 if($fiscal_year){
+    //                     return $query->where('fiscal_year',$fiscal_year);
+    //                 }
 
-                })->where(function($query){
+    //             })->where(function($query){
 
-                    $outlet_id = \Request::get('outlet_id');
+    //                 $outlet_id = \Request::get('outlet_id');
 
-                    if($outlet_id){
+    //                 if($outlet_id){
 
-                        return $query->where('outlet_id',$outlet_id);
-                    }
+    //                     return $query->where('outlet_id',$outlet_id);
+    //                 }
 
-                })
-                ->where('org_id', \Auth::user()->org_id)
-                ->orderBy('id', 'desc')
-                ->paginate(30);
-        $page_title = 'Invoice';
-        $page_description = 'Manage Invoice';
-        $clients = \App\Models\Client::select('id', 'name')->where('org_id', \Auth::user()->org_id)->orderBy('id', 'DESC')->pluck('name','id')->all();
-        $fiscal_years = \App\Models\Fiscalyear::pluck('fiscal_year as name', 'fiscal_year as id')->all();
+    //             })
+    //             ->where('org_id', \Auth::user()->org_id)
+    //             ->orderBy('id', 'desc')
+    //             ->paginate(30);
+    //     $page_title = 'Invoice';
+    //     $page_description = 'view invoice';
+    //     $clients = \App\Models\Client::select('id', 'name')->where('org_id', \Auth::user()->org_id)->orderBy('id', 'DESC')->pluck('name','id')->all();
+    //     $fiscal_years = \App\Models\Fiscalyear::pluck('fiscal_year as name', 'fiscal_year as id')->all();
 
-        $outlets = $this->getUserOutlets();
-        return view('admin.invoice.detailindex', compact('orders', 'page_title', 'page_description','clients','fiscal_years','outlets'));
-    }
-    public function detail($id)
-    {
-        $page_title = 'Invoice';
-        $page_description = 'Invoice Detail View';
-        $order = null;
-        $orderDetail = null;
-        $products = Product::select('id', 'name')->where('org_id',\Auth::user()->org_id)->where('product_division',"raw_material")->get();
-        $users = \App\User::where('enabled', '1')->where('org_id', \Auth::user()->org_id)->pluck('first_name', 'id');
-        $productlocation = \App\Models\ProductLocation::pluck('location_name', 'id')->all();
-        //$clients = Client::select('id', 'name', 'location')->orderBy('id', DESC)->get();
-        $clients = \App\Models\Client::select('id', 'name')->where('org_id', \Auth::user()->org_id)->orderBy('id', 'DESC')->get();
-        $invoice = $this->invoice->find($id);
-        \TaskHelper::authorizeOrg($invoice);
-        $invoice_details = \App\Models\InvoiceDetail::where('invoice_id', $id)->get();
+    //     $outlets = $this->getUserOutlets();
+    //     return view('admin.invoice.detailindex', compact('orders', 'page_title', 'page_description','clients','fiscal_years','outlets'));
+    // }
+    // public function detail($id)
+    // {
+    //     $page_title = 'Invoice';
+    //     $page_description = 'Invoice Detail View';
+    //     $order = null;
+    //     $orderDetail = null;
+    //     $products = Product::select('id', 'name')->where('org_id',\Auth::user()->org_id)->where('product_division',"raw_material")->get();
+    //     $users = \App\User::where('enabled', '1')->where('org_id', \Auth::user()->org_id)->pluck('first_name', 'id');
+    //     $productlocation = \App\Models\ProductLocation::pluck('location_name', 'id')->all();
+    //     //$clients = Client::select('id', 'name', 'location')->orderBy('id', DESC)->get();
+    //     $clients = \App\Models\Client::select('id', 'name')->where('org_id', \Auth::user()->org_id)->orderBy('id', 'DESC')->get();
+    //     $invoice = $this->invoice->find($id);
+    //     \TaskHelper::authorizeOrg($invoice);
+    //     $invoice_details = \App\Models\InvoiceDetail::where('invoice_id', $id)->get();
 
-        $units = \App\Models\ProductsUnit::orderBy('id', 'desc')->get();
+    //     $units = \App\Models\ProductsUnit::orderBy('id', 'desc')->get();
 
-        $outlets = \App\Models\PosOutlets::get();
-        return view('admin.invoice.detail', compact('page_title', 'users', 'units', 'page_description', 'order', 'orderDetail', 'products', 'clients', 'productlocation', 'invoice', 'invoice_details','outlets'));
-    }
+    //     $outlets = \App\Models\PosOutlets::get();
+    //     return view('admin.invoice.detail', compact('page_title', 'users', 'units', 'page_description', 'order', 'orderDetail', 'products', 'clients', 'productlocation', 'invoice', 'invoice_details','outlets'));
+    // }
     //renewals
+    public function excel($id){
+        $invoice = Invoice::with(['invoiceDetail.product','invoiceDetail.units', 'client', 'outlet'])->where('id', $id)->get();
+        // dd($invoice);
+        // \TaskHelper::authorizeOrg($invoice);
+        $data = json_decode(json_encode($invoice), true);
+        return \Excel::download(new \App\Exports\TaxInvoiceExport($data,'Tax invoice detail'), "Tax Invoice.xls");
+    }
     public function renewals()
     {
         $orders = Invoice::orderBy('id', 'desc')->where('is_renewal', '1')->where('org_id', \Auth::user()->org_id)->paginate(30);

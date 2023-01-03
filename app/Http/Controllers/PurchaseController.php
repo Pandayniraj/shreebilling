@@ -1468,7 +1468,11 @@ class PurchaseController extends Controller
 
         return view('admin.purchase-book.index', compact('purchase_book', 'page_title', 'fiscal_year'));
     }
-
+    public function excel($id){
+        $excel= PurchaseOrder::with('product_details.product','product_details.units','client', )->where('id', $id)->get();
+        $data = json_decode(json_encode($excel), true);   
+            return \Excel::download(new \App\Exports\PurchasedetailExcelExport($data,'purchase detailexcel'), "purchaseDetailexcel.xls");  
+    }
     private function createproductentries($purchaseorder, $entry)
     {
         $products = \App\Models\PurchaseOrderDetail::where('order_no', $purchaseorder->id)->where('is_inventory', '1')->get();

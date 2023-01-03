@@ -21,8 +21,6 @@ class PurchaseOrder extends Model
         return $this->belongsTo(\App\User::class);
     }
 
-
-
     public function client()
     {
         if ($this->supplier_type == 'cash_equivalent') {

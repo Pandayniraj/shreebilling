@@ -277,7 +277,8 @@ input[type="search"] {
                             @if($o->supplier_type == 'supplier')
                                 <a href="{!! route('admin.payment.purchase.list', $o->id) !!}"  title="View Payment"><i class="fa fa-credit-card"></i></a>
                             @endif
-                                <a href="{!! route('admin.purchase.confirm-delete', $o->id) !!}?type={{\Request::get('type')}}" data-toggle="modal" data-target="#modal_dialog" title="{{ trans('general.button.delete') }}"><i class="fa fa-trash deletable"></i></a>
+                            <a href="/admin/purchase/excel/{{ $o->id }}" title="download excel"><i class="fa fa-table" aria-hidden="true"></i></a>
+                            <a href="{!! route('admin.purchase.confirm-delete', $o->id) !!}?type={{\Request::get('type')}}" data-toggle="modal" data-target="#modal_dialog" title="{{ trans('general.button.delete') }}"><i class="fa fa-trash deletable"></i></a>
                             @else
                                 <i class="fa fa-edit text-muted" title=""></i>
                                 <i class="fa fa-trash text-muted" title=""></i>
@@ -285,7 +286,6 @@ input[type="search"] {
 
                         @endif
                         @else
-
                             @if ( $o->isEditable() )
                                 @if($o->status == 'paid' && \Request::get('type') == 'invoice')
                                 <i class="fa fa-edit text-muted" title=""></i>

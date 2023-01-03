@@ -202,7 +202,7 @@
                             <div class="col-md-12">
                                 <div class="callout bg-info">
                                     <label>Select Customer <i class="imp">*</i></label>
-                                    <select class="customer_id select2" name="customer_id" required="required" id='client_id'>
+                                    <select class="customer_id select2" name="customer_id" disabled id='client_id'>
                                         <option class="form-control input-sm input input-lg" value="">Select Customer</option>
                                         @if(isset($clients))
                                         @foreach($clients as $key => $uk)
@@ -225,7 +225,7 @@
                                                 <div class="input-group-addon">
                                                     <i class="fa fa-clone"></i>
                                                 </div>
-                                                {!! Form::number('bill_no',$invoice->bill_no, ['class' => 'form-control input-sm','min'=>1]) !!}
+                                                {!! Form::number('bill_no',$invoice->bill_no, ['class' => 'form-control input-sm','min'=>1, 'disabled'=>disabled]) !!}
                                             </div>
                                             <!-- /.input group -->
                                         </div>
@@ -239,17 +239,11 @@
                                                 </div>
                                                   {!! Form::select('terms',[
                                                 'custom' => 'Custom','net15'=>'Net 15', 'net30'=>'Net 30', 'net45'=>'Net 45','net60'=>'Net 60'],
-                                                $invoice->terms, ['class' => 'form-control input-sm']) !!}
+                                                $invoice->terms, ['class' => 'form-control input-sm', 'disabled'=>disabled]) !!}
                                             </div>
                                             <!-- /.input group -->
                                         </div>
                                     </div>
-
-
-
-
-
-
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Invoice Date:</label>
@@ -258,12 +252,11 @@
                                                 <div class="input-group-addon">
                                                     <i class="fa fa-calendar"></i>
                                                 </div>
-                                                <input type="text" class="form-control input-sm pull-right datepicker date-toggle-nep-eng"  name="bill_date" value="{{  $invoice->bill_date}}" id="bill_date" required="">
+                                                <input type="text" class="form-control input-sm pull-right"  name="bill_date" value="{{\App\Helpers\TaskHelper::getNepaliDate($invoice->bill_date)}}" id="bill_date" disabled>
                                             </div>
                                             <!-- /.input group -->
                                         </div>
                                     </div>
-
 
                                     <div class="col-md-3">
                                         <div class="form-group">
@@ -273,7 +266,7 @@
                                                 <div class="input-group-addon">
                                                     <i class="fa fa-calendar"></i>
                                                 </div>
-                                                <input type="text" class="form-control input-sm pull-right datepicker date-toggle-nep-eng" name="due_date" value="{{ $invoice->due_date }}" id="due_date">
+                                                <input type="text" class="form-control input-sm pull-right" name="due_date" value="{{ \App\Helpers\TaskHelper::getNepaliDate($invoice->due_date) }}" id="due_date" disabled>
                                             </div>
                                             <!-- /.input group -->
                                         </div>
@@ -290,7 +283,7 @@
                                                 <div class="input-group-addon">
                                                     <i class="fa fa-file"></i>
                                                 </div>
-                                                <input type="text" name="customer_pan" value="{{ old('customer_pan') ??  $invoice->customer_pan }}" class="form-control input-sm pull-right" id="pan_no" onKeyUp="if(this.value>999999999){this.value='999999999';}else if(this.value<0){this.value='0';}">
+                                                <input type="text" name="customer_pan" value="{{ old('customer_pan') ??  $invoice->customer_pan }}" class="form-control input-sm pull-right" id="pan_no" onKeyUp="if(this.value>999999999){this.value='999999999';}else if(this.value<0){this.value='0';}" disabled>
                                             </div>
                                             <!-- /.input group -->
                                         </div>
@@ -298,33 +291,33 @@
 
                                     <div class="col-md-3 form-group" style="">
                                         <label for="comment">Person Name</label>
-                                        <input type="text" name="name" id="name" class="form-control input-sm" value="{{ $invoice->name }}">
+                                        <input type="text" name="name" id="name" class="form-control input-sm" value="{{ $invoice->name }}" disabled>
                                     </div>
 
                                     <div class="col-md-3 form-group" style="">
                                         <label for="position">Position</label>
-                                        <input type="text" name="position" class="form-control input-sm" id="position" value="{{ $invoice->position }}">
+                                        <input type="text" name="position" class="form-control input-sm" id="position" value="{{ $invoice->position }}" disabled>
                                     </div>
 
                                     <div class="col-md-3 form-group" style="">
                                         <label for="user_id">Salesperson</label>
-                                        <input type="text" name="user_id" value="{{$invoice->sales_person}}" class="form-control input-sm input-sm" id="user_id">
+                                        <input type="text" name="user_id" value="{{$invoice->sales_person}}" class="form-control input-sm input-sm" id="user_id" disabled>
                                         {{-- {!! Form::select('user_id', $users, \Auth::user()->id, ['class' => 'form-control input-sm input-sm', 'id'=>'user_id']) !!} --}}
                                     </div>
 
                                     <div class="col-md-3 form-group" style="">
                                         <label for="user_id">Location</label>
-                                        {!! Form::select('from_stock_location', [''=>'Select']+$productlocation, $invoice->from_stock_location, ['class' => 'form-control input-sm label-default']) !!}
+                                        {!! Form::select('from_stock_location', [''=>'Select']+$productlocation, $invoice->from_stock_location, ['class' => 'form-control input-sm label-default', 'disabled'=>disabled]) !!}
                                     </div>
 
                                     <div class="col-md-3 form-group" style="">
                                         <label for="user_id">Is renewal</label>
-                                        {!! Form::select('is_renewal', ['0'=>'No','1'=>'Yes'], $invoice->is_renewal, ['class' => 'form-control input-sm']) !!}
+                                        {!! Form::select('is_renewal', ['0'=>'No','1'=>'Yes'], $invoice->is_renewal, ['class' => 'form-control input-sm', 'disabled'=>disabled]) !!}
                                     </div>
 
                                     <div class="col-md-3 form-group">
                                         <label >Outlets</label>
-                                        <select name="outlet_id" class="form-control input-sm searchable">
+                                        <select name="outlet_id" class="form-control input-sm searchable" disabled>
 
                                             @foreach($outlets as $key=>$out)
                                                 <option value="{{ $out->id }}" @if( $out->id ==  $invoice->outlet_id) selected="" @endif>
@@ -337,17 +330,17 @@
 
                                     <div class="col-md-3 form-group" style="">
                                         <label for="position">Invoice Number</label>
-                                        <input type="text" readonly="readonly" name="position" class="form-control input-sm" id="position" value="{{ $invoice->bill_no }}">
+                                        <input type="text" disabled name="position" class="form-control input-sm" id="position" value="{{ $invoice->bill_no }}">
                                     </div>
 
                                     <div class="col-md-3 form-group" style="">
                                         <label for="position">Fiscal Year</label>
-                                        <input type="text" readonly="readonly" name="position" class="form-control input-sm" id="position" value="{{ $invoice->fiscal_year }}">
+                                        <input type="text" disabled name="position" class="form-control input-sm" id="position" value="{{ $invoice->fiscal_year }}">
                                     </div>
 
                                     <div class="col-md-3 form-group" style="">
                                         <label for="position"><i class="fa fa-database"></i> CBMS Server Sync </label>
-                                        <input type="text" readonly="readonly" name="position" class="form-control input-sm" id="position" value="{{ $invoice->sync_with_ird }}">
+                                        <input type="text" disabled name="position" class="form-control input-sm" id="position" value="{{ $invoice->sync_with_ird }}">
                                     </div>
 
                                 </div>
@@ -359,14 +352,14 @@
                             <table class="table">
                                 <thead>
                                     <tr class="bg-primary">
-                                        <th class="col-md-1">S.N</th>
+                                        <th width="5%">S.N</th>
                                         <th >Particulars *</th>
                                         <th class="col-md-1">Price *</th>
                                         <th class="col-md-1">Quantity *</th>
                                         <th class="col-md-1" title="Discount">Dis</th>
-                                        <th class="col-md-2">Unit</th>
-                                        <th>Tax Rate</th>
-                                        <th>Tax Amount</th> 
+                                        <th class="col-md-1">Unit</th>
+                                        <th width="10%">Tax Rate</th>
+                                        <th width="10%">Tax Amount</th> 
                                         <th class="col-md-2">Total</th>
                                     </tr>
                                 </thead>
@@ -383,7 +376,7 @@
                                     <tr>
                                          <td class="p_sn">{{$count++}}</td>
                                         <td>
-                                            <select class="form-control input-sm select2 product_id select-product-id" name="product_id[]" required="required">
+                                            <select class="form-control input-sm select2 product_id select-product-id" name="product_id[]" disabled>
                                                 <option value="">Select Product</option>
                                                 @foreach($products as $key => $pk)
                                                 <option value="{{ $pk->id }}" @if(isset($details->product_id) && $details->product_id == $pk->id) selected="selected"@endif>{{ $pk->name }}</option>
@@ -391,16 +384,16 @@
                                             </select>
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control input-sm price" name="price[]" placeholder="Price" value="@if(isset($details->price)){{ $details->price }}@endif" required="required">
+                                            <input type="text" class="form-control input-sm price" name="price[]" placeholder="Price" value="@if(isset($details->price)){{ $details->price }}@endif" disabled>
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control input-sm quantity" name="quantity[]" placeholder="Quantity" step=".01" required="required" value="{{ $details->quantity }}">
+                                            <input type="number" class="form-control input-sm quantity" name="quantity[]" placeholder="Quantity" step=".01" disabled value="{{ $details->quantity }}">
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control input-sm discount_amount_line" name="dis_amount[]" value="{{$details->discount}}">
+                                            <input type="number" class="form-control input-sm discount_amount_line" name="dis_amount[]" value="{{$details->discount}}" disabled>
                                         </td>   
                                         <td>
-                                            <select class="form-control input-sm units" name="unit[]">
+                                            <select class="form-control input-sm units" name="unit[]" disabled>
                                                 <option value="">Unit</option>
                                                 @foreach($units as $unit)
                                                 <option value="{{$unit->id}}" @if($details->unit == $unit->id)selected @endif>{{$unit->name}}({{ $unit->symbol }})</option>
@@ -409,19 +402,19 @@
                                         </td>
                                         
                                         <td>
-                                            <select class="form-control input-sm tax_rate_line input-sm" name="tax[]">
+                                            <select class="form-control input-sm tax_rate_line input-sm" name="tax[]" disabled>
                                                 <option value="0" @if($details->tax== "0")selected @endif>Exempt(0)</option>
                                                 <option value="13" @if($details->tax== "13")selected @endif>VAT(13)</option>
                                             </select>
                                         </td>
                                         <td style="display:block;">
-                                            <input type="number" class="form-control input-sm tax_amount_line input-sm" name="tax_amount[]" value="{{$details->tax_amount}}" readonly="readonly" />
+                                            <input type="number" class="form-control input-sm tax_amount_line input-sm" name="tax_amount[]" value="{{$details->tax_amount}}" disabled />
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control input-sm total" name="total[]" placeholder="Total" value="@if(isset($details->total)){{ $details->total }}@endif" readonly="readonly" style="float:left; width:80%;">
-                                            <a href="javascript::void(1);" style="width: 10%;">
+                                            <input type="number" class="form-control input-sm total" name="total[]" placeholder="Total" value="@if(isset($details->total)){{ $details->total }}@endif" disabled style="float:left; width:80%;">
+                                            {{-- <a href="javascript::void(1);" style="width: 10%;">
                                                 <i class="remove-this btn btn-xs btn-danger icon fa fa-trash deletable" style="float: right; color: #fff;"></i>
-                                            </a>
+                                            </a> --}}
                                         </td>
                                     </tr>
                                     @else
@@ -517,12 +510,12 @@
                         <div class="hide_on_tablet">
                             <div class="col-md-6 form-group" style="margin-top:5px;">
                                 <label for="comment">Customer Notes</label>
-                                <textarea class="form-control input-sm TextBox comment" name="comment">@if(isset($invoice->comment)){{ $invoice->comment }}@endif</textarea>
+                                <textarea class="form-control input-sm TextBox comment" name="comment" disabled>@if(isset($invoice->comment)){{ $invoice->comment }}@endif</textarea>
                             </div>
 
                             <div class="col-md-6 form-group" style="margin-top:5px;">
                                 <label for="address">Address</label>
-                                <textarea id="physical_address" class="form-control input-sm TextBox address" name="address">@if(isset($invoice->address)){{ $invoice->address }}@endif</textarea>
+                                <textarea id="physical_address" class="form-control input-sm TextBox address" name="address" disabled>@if(isset($invoice->address)){{ $invoice->address }}@endif</textarea>
                             </div>
                         </div>
 

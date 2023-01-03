@@ -4,7 +4,7 @@
 
 <section class="content-header" style="margin-top: -35px; margin-bottom: 20px">
     <h1>
-        {{ $page_title }} Manager
+        {{ $page_title }} List
         <small>{{ $page_description }}</small>
     </h1>
 

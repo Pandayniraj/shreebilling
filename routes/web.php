@@ -1259,14 +1259,12 @@ Route::get('invoicetrash', ['as' => 'admin.invoicetrash.index', 'uses' => 'Invoi
         Route::get('invoice/AjaxValidation/{productid}',  ['as' => 'admin.invoice.validation',           'uses' => 'InvoiceController@ajaxvalidation']);
         //end
         Route::get('invoice1', ['as' => 'admin.invoice.index', 'uses' => 'InvoiceController@index']);
-        Route::get('invoice/detailindex', ['as' => 'admin.invoice.detailindex', 'uses' => 'InvoiceController@detailindex']);
-        Route::get('invoice/detail/{id}', ['as' => 'admin.invoice.detail', 'uses' => 'InvoiceController@detail']);
+        // Route::get('invoice/detailindex', ['as' => 'admin.invoice.detailindex', 'uses' => 'InvoiceController@detailindex']);
+        // Route::get('invoice/detail/{id}', ['as' => 'admin.invoice.detail', 'uses' => 'InvoiceController@detail']);
+        Route::get('invoice/excel/{id}',['as' => 'admin.invoice.detail', 'uses' => 'InvoiceController@excel']);
         Route::get('invoice/create', ['as' => 'admin.invoice.create', 'uses' => 'InvoiceController@create']);
-
         Route::post('invoice/create', ['as' => 'admin.invoice.store', 'uses' => 'InvoiceController@store']);
-
         Route::get('invoice1/{id}', ['as' => 'admin.invoice.show', 'uses' => 'InvoiceController@show']);
-
         Route::get('invoice/void/{id}', ['as' => 'admin.salesaccount.void', 'uses' => 'InvoiceController@invoiceVoid']);
         Route::get('invoice/duepayment', ['as' => 'admin.invoice.duepayment',   'uses' => 'InvoiceController@duepayment']);
 
@@ -1291,7 +1289,7 @@ Route::get('invoicetrash', ['as' => 'admin.invoicetrash.index', 'uses' => 'Invoi
         Route::get('purchase', ['as' => 'admin.purchase.index',            'uses' => 'PurchaseController@index']);
         Route::get('purchase/detailindex', ['as' => 'admin.purchase.detailindex',            'uses' => 'PurchaseController@detailindex']);
         Route::get('purchase/detail/{orderId}', ['as' => 'admin.purchase.detail',            'uses' => 'PurchaseController@detail']);
-
+        Route::get('purchase/excel/{id}', ['as' => 'admin.purchase.excel',            'uses' => 'PurchaseController@excel']);
         Route::get('purchase/create', ['as' => 'admin.purchase.create',           'uses' => 'PurchaseController@create']);
         Route::post('purchase', ['as' => 'admin.purchase.store',            'uses' => 'PurchaseController@store']);
         Route::get('purchase/{orderId}/edit', ['as' => 'admin.purchase.edit',             'uses' => 'PurchaseController@edit']);
