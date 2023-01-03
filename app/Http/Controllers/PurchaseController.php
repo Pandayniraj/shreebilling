@@ -177,162 +177,162 @@ class PurchaseController extends Controller
 
         return view('admin.purchase.index', compact('orders','currency', 'page_title', 'page_description','suppliers'));
     }
-    public function detailindex(){
+    // public function detailindex(){
       
 
-        $filterdate = function ($query)  {
+    //     $filterdate = function ($query)  {
 
-            $start_date = \Request::get('start_date');
+    //         $start_date = \Request::get('start_date');
 
-            $end_date = \Request::get('end_date');
+    //         $end_date = \Request::get('end_date');
 
-            if($start_date && $end_date){
-                return $query->where('bill_date','>=',$start_date)
-                        ->where('bill_date','<=',$end_date);
-            }
+    //         if($start_date && $end_date){
+    //             return $query->where('bill_date','>=',$start_date)
+    //                     ->where('bill_date','<=',$end_date);
+    //         }
 
-        };
-
-
-        $filterSupplier = function($query){
-
-            $supplier = \Request::get('supplier_id');
-            if($supplier){
-
-                return $query->where('supplier_id',$supplier);
-            }
-
-        };
-
-        $filterCurrency = function($query){
-
-            $currency = \Request::get('currency');
-
-            if($currency){
-
-                return $query->where('currency',$currency);
-            }
-
-        };
+    //     };
 
 
-        if (\Request::get('type') && \Request::get('type') == 'purchase_orders') {
-            $orders = PurchaseOrder::where('purchase_type', 'purchase_orders')
-                ->where('org_id', \Auth::user()->org_id)
-                ->where(function($query) use ($filterdate){
+    //     $filterSupplier = function($query){
 
-                    return $filterdate($query);
+    //         $supplier = \Request::get('supplier_id');
+    //         if($supplier){
 
-                })
-                ->where(function($query) use ($filterSupplier){
+    //             return $query->where('supplier_id',$supplier);
+    //         }
 
-                    return $filterSupplier($query);
+    //     };
 
-                })->where(function($query) use ($filterCurrency){
+    //     $filterCurrency = function($query){
 
-                    return $filterCurrency($query);
+    //         $currency = \Request::get('currency');
 
-                })
-                ->orderBy('id', 'DESC');
-        } elseif (\Request::get('type') && \Request::get('type') == 'request') {
-            $orders = PurchaseOrder::where('purchase_type', 'request')
-                ->where('org_id', \Auth::user()->org_id)
-                ->where(function($query) use ($filterdate){
-                    return $filterdate($query);
-                })
-                  ->where(function($query) use ($filterSupplier){
+    //         if($currency){
 
-                    return $filterSupplier($query);
+    //             return $query->where('currency',$currency);
+    //         }
 
-                })->where(function($query) use ($filterCurrency){
-
-                    return $filterCurrency($query);
-
-                })
-                ->orderBy('id', 'DESC');
-        } elseif (\Request::get('type') && \Request::get('type') == 'bills') {
-            $orders = PurchaseOrder::
-                where('org_id', \Auth::user()->org_id)
-                ->where(function($query) use ($filterdate){
-                    return $filterdate($query);
-                })
-                  ->where(function($query) use ($filterSupplier){
-
-                    return $filterSupplier($query);
-
-                })->where(function($query) use ($filterCurrency){
-
-                    return $filterCurrency($query);
-
-                })
-                ->orderBy('id', 'DESC');
-        } else {
-            $orders = PurchaseOrder::orderBy('id', 'desc')
-                ->where('org_id', \Auth::user()->org_id)
-                ->where(function($query) use ($filterdate){
-                    return $filterdate($query);
-                })
-                  ->where(function($query) use ($filterSupplier){
-
-                    return $filterSupplier($query);
-
-                })->where(function($query) use ($filterCurrency){
-
-                    return $filterCurrency($query);
-
-                });
-        }
-
-        if(\Request::get('search') && \Request::get('search') == 'true'){
-
-            $orders =  $orders->get();
+    //     };
 
 
-        }else{
+    //     if (\Request::get('type') && \Request::get('type') == 'purchase_orders') {
+    //         $orders = PurchaseOrder::where('purchase_type', 'purchase_orders')
+    //             ->where('org_id', \Auth::user()->org_id)
+    //             ->where(function($query) use ($filterdate){
 
-            $orders =  $orders->paginate(40);
-        }
+    //                 return $filterdate($query);
 
-        $page_title = 'Purchase Orders';
-        $page_description = 'Purchase Orders Detail View';
-        $suppliers = Client::where('relation_type','supplier')->pluck('name','id')->all();
-        $currency = \App\Models\Country::whereEnabled('1')->pluck('currency_name','currency_code as id')->all();
+    //             })
+    //             ->where(function($query) use ($filterSupplier){
 
-        return view('admin.purchase.detailindex', compact('orders','currency', 'page_title', 'page_description','suppliers'));
+    //                 return $filterSupplier($query);
+
+    //             })->where(function($query) use ($filterCurrency){
+
+    //                 return $filterCurrency($query);
+
+    //             })
+    //             ->orderBy('id', 'DESC');
+    //     } elseif (\Request::get('type') && \Request::get('type') == 'request') {
+    //         $orders = PurchaseOrder::where('purchase_type', 'request')
+    //             ->where('org_id', \Auth::user()->org_id)
+    //             ->where(function($query) use ($filterdate){
+    //                 return $filterdate($query);
+    //             })
+    //               ->where(function($query) use ($filterSupplier){
+
+    //                 return $filterSupplier($query);
+
+    //             })->where(function($query) use ($filterCurrency){
+
+    //                 return $filterCurrency($query);
+
+    //             })
+    //             ->orderBy('id', 'DESC');
+    //     } elseif (\Request::get('type') && \Request::get('type') == 'bills') {
+    //         $orders = PurchaseOrder::
+    //             where('org_id', \Auth::user()->org_id)
+    //             ->where(function($query) use ($filterdate){
+    //                 return $filterdate($query);
+    //             })
+    //               ->where(function($query) use ($filterSupplier){
+
+    //                 return $filterSupplier($query);
+
+    //             })->where(function($query) use ($filterCurrency){
+
+    //                 return $filterCurrency($query);
+
+    //             })
+    //             ->orderBy('id', 'DESC');
+    //     } else {
+    //         $orders = PurchaseOrder::orderBy('id', 'desc')
+    //             ->where('org_id', \Auth::user()->org_id)
+    //             ->where(function($query) use ($filterdate){
+    //                 return $filterdate($query);
+    //             })
+    //               ->where(function($query) use ($filterSupplier){
+
+    //                 return $filterSupplier($query);
+
+    //             })->where(function($query) use ($filterCurrency){
+
+    //                 return $filterCurrency($query);
+
+    //             });
+    //     }
+
+    //     if(\Request::get('search') && \Request::get('search') == 'true'){
+
+    //         $orders =  $orders->get();
+
+
+    //     }else{
+
+    //         $orders =  $orders->paginate(40);
+    //     }
+
+    //     $page_title = 'Purchase Orders';
+    //     $page_description = 'Purchase Orders Detail View';
+    //     $suppliers = Client::where('relation_type','supplier')->pluck('name','id')->all();
+    //     $currency = \App\Models\Country::whereEnabled('1')->pluck('currency_name','currency_code as id')->all();
+
+    //     return view('admin.purchase.detailindex', compact('orders','currency', 'page_title', 'page_description','suppliers'));
     
-    }
-    public function detail($id)
-    {
-        $page_title = 'Purchase';
-        $page_description = 'View Purchase Detail';
-        $order = PurchaseOrder::where('id', $id)->first();
-        $orderDetails = PurchaseOrderDetail::where('order_no', $id)->get();
-        //        dd($orderDetails);
+    // }
+    // public function detail($id)
+    // {
+    //     $page_title = 'Purchase';
+    //     $page_description = 'View Purchase Detail';
+    //     $order = PurchaseOrder::where('id', $id)->first();
+    //     $orderDetails = PurchaseOrderDetail::where('order_no', $id)->get();
+    //     //        dd($orderDetails);
 
-        if (\Request::get('type') == 'assets') {
-            $products = Product::select('id', 'name','product_code')->where('is_fixed_assets', '1')->get();
-        } else {
-            $products = Product::select('id', 'name','product_code')->where('is_fixed_assets', '0')->get();
-        }
+    //     if (\Request::get('type') == 'assets') {
+    //         $products = Product::select('id', 'name','product_code')->where('is_fixed_assets', '1')->get();
+    //     } else {
+    //         $products = Product::select('id', 'name','product_code')->where('is_fixed_assets', '0')->get();
+    //     }
 
-        $clients = Client::select('id', 'name', 'location', 'vat')
-            // ->where('relation_type', 'supplier')
-            ->orderBy('id', 'DESC')->get();
-        //$clients = Lead::select('id', 'name', 'organization')->orderBy('id', DESC)->get();
-        $users = \App\User::where('enabled', '1')->where('org_id', \Auth::user()->org_id)->pluck('first_name', 'id');
+    //     $clients = Client::select('id', 'name', 'location', 'vat')
+    //         // ->where('relation_type', 'supplier')
+    //         ->orderBy('id', 'DESC')->get();
+    //     //$clients = Lead::select('id', 'name', 'organization')->orderBy('id', DESC)->get();
+    //     $users = \App\User::where('enabled', '1')->where('org_id', \Auth::user()->org_id)->pluck('first_name', 'id');
 
-        $productlocation = \App\Models\PosOutlets::get();
-        $prod_unit = \App\Models\ProductsUnit::all();
+    //     $productlocation = \App\Models\PosOutlets::get();
+    //     $prod_unit = \App\Models\ProductsUnit::all();
 
-        $projects = \App\Models\Projects::pluck('name', 'id')->all();
-        $paid_through = \App\Models\COALedgers::where(
-            'group_id', \FinanceHelper::get_ledger_id('CASH_EQUIVALENTS')
-        )->get();
-        $fiscal_years = \App\Models\Fiscalyear::pluck('fiscal_year as name', 'id')->all();
-        $currency = \App\Models\Country::select('*')->whereEnabled('1')->orderByDesc('id')->get();
-        $ledger_all=\app\Models\COALedgers::pluck('name','id');
-        return view('admin.purchase.detail', compact('page_title', 'users', 'page_description', 'productlocation', 'order', 'orderDetails', 'products', 'clients', 'prod_unit', 'projects', 'paid_through', 'fiscal_years','currency','ledger_all'));
-    }
+    //     $projects = \App\Models\Projects::pluck('name', 'id')->all();
+    //     $paid_through = \App\Models\COALedgers::where(
+    //         'group_id', \FinanceHelper::get_ledger_id('CASH_EQUIVALENTS')
+    //     )->get();
+    //     $fiscal_years = \App\Models\Fiscalyear::pluck('fiscal_year as name', 'id')->all();
+    //     $currency = \App\Models\Country::select('*')->whereEnabled('1')->orderByDesc('id')->get();
+    //     $ledger_all=\app\Models\COALedgers::pluck('name','id');
+    //     return view('admin.purchase.detail', compact('page_title', 'users', 'page_description', 'productlocation', 'order', 'orderDetails', 'products', 'clients', 'prod_unit', 'projects', 'paid_through', 'fiscal_years','currency','ledger_all'));
+    // }
 
     /**
      * @return \Illuminate\View\View
@@ -361,11 +361,8 @@ class PurchaseController extends Controller
         $orderDetail = null;
         $products = Product::select('id', 'name','product_code')->get();
         $users = \App\User::where('enabled', '1')->where('org_id', \Auth::user()->org_id)->pluck('first_name', 'id');
-
         $order_count = DB::table('purch_orders')->count();
-
         $prod_unit = \App\Models\ProductsUnit::all();
-
         if (\Request::get('type') == 'assets') {
             $products = Product::select('id', 'name','product_code')->where('is_fixed_assets', '1')->get();
         } else {
@@ -383,7 +380,6 @@ class PurchaseController extends Controller
 
         $productlocation  = \App\Models\PosOutlets::get();
         $clients = Client::select('id', 'name', 'location', 'vat')
-            //->where('relation_type', 'supplier')
             ->orderBy('id', 'DESC')->get();
         $paid_through = \App\Models\COALedgers::where(
             'group_id',
@@ -429,7 +425,8 @@ class PurchaseController extends Controller
 
     public function store(Request $request)
     {
-
+        $totalpurchaseprice=0;
+        $totaltax=0;
         $order_attributes = $request->all();
         if ($request->datetype == 'nep') {
             $order_attributes['bill_date'] = $this->convertdate($order_attributes['bill_date']);
@@ -445,7 +442,9 @@ class PurchaseController extends Controller
         $order_attributes['supplier_id'] = $request->customer_id;
         $order_attributes['tax_amount'] = $request->taxable_tax;
         $order_attributes['taxable_amount'] = $request->taxable_amount;
-        $order_attributes['total'] = $request->final_total;
+        // if($request->is_import!=1){
+        // $order_attributes['total'] = $request->final_total;
+        // }
         // $order_attributes['total_excise_duty']= $request->total_excise_duty;
         $order_attributes['ledger_id'] = (\App\Models\Client::find($request->customer_id))->ledger_id;
         $order_attributes['fiscal_year'] = $fiscal_year->fiscal_year;
@@ -473,13 +472,14 @@ class PurchaseController extends Controller
                         $landing_price= (double)$price[$key]- ((double)$request->dis_amount[$key]/(double)$quantity[$key])??0; 
                     
                     }
-                 
+          
                 $detail = new PurchaseOrderDetail();
                 $detail->suplier_id = $request->customer_id;
                 $detail->order_no = $order_no;
                 $detail->product_id = $product_id[$key];
                 $detail->unit_price = $price[$key];
                 $detail->unitpricewithimport = $landing_price;
+                $totalpurchaseprice+=$detail->unitpricewithimport;
                 $detail->qty_invoiced = $quantity[$key];
                 $detail->quantity_ordered = $quantity[$key];
                 $detail->quantity_recieved = $quantity[$key];
@@ -493,6 +493,7 @@ class PurchaseController extends Controller
                 else{
                     $detail->tax_amount = $tax_amount[$key];
                 }
+                $totaltax+=  $detail->tax_amount;
                 $detail->tds_amount = $request->tds_amount[$key];
                 $detail->tds_rate= $request->tds_per[$key];
                 $detail->discount = $request->dis_amount[$key];
@@ -508,7 +509,7 @@ class PurchaseController extends Controller
                 $detail->is_inventory = 1;
                 $detail->rmb =$request->rmb[$key]??'';
                 $detail->save();
-
+                $purchaseorder->update(['total'=>$totalpurchaseprice+$totaltax, 'tax_amount'=>$totaltax]);
                 // stockMove information
                 //dd($request->all());
                 $stockMove = new StockMove();
@@ -1681,7 +1682,7 @@ class PurchaseController extends Controller
             //     $tds->save();
             // }
            
-            $productids=\App\Models\PurchaseOrderDetail::where('order_no', $purchaseorder->id)->select('product_id','tds_amount','total','tax_amount')->get();
+            $productids=\App\Models\PurchaseOrderDetail::where('order_no', $purchaseorder->id)->select('product_id','tds_amount','total','tax_amount', 'qty_invoiced')->get();
        
             foreach($productids as $id){
                 
@@ -1771,12 +1772,14 @@ class PurchaseController extends Controller
 
             //now update entry_id in income row
             $purchaseorder->update(['entry_id' => $entry->id]);
-
+            $purchaseorderdetail=$productids->toArray();
+            $i=0;
              //import purchase
             if($purchaseorder->is_import==1){
                 $dr_amount=0;
                 $cr_amount=0;
                 $importpurchase=\App\Models\ImportPurchase::where('purchase_order_id',$purchaseorder->id)->get();
+                
                 foreach ($importpurchase as $costitem){
                     //debit entry
                     $debit_entryitem = new \App\Models\Entryitem();
@@ -1785,24 +1788,25 @@ class PurchaseController extends Controller
                     $debit_entryitem->org_id = \Auth::user()->org_id;
                     $debit_entryitem->dc = 'D';
                     $debit_entryitem->ledger_id = $costitem->debit_account_ledger_id;
-                    $debit_entryitem->amount = $costitem->amount;
+                    $debit_entryitem->amount = $costitem->amount * $purchaseorderdetail[$i]['qty_invoiced']??'';
                     $debit_entryitem->is_additional_cost =1;
                     $debit_entryitem->narration = 'Import purchase '.$costitem->cost_type .' cost added';
                     $debit_entryitem->save();
-                    $dr_amount+=$costitem->amount;
 
                     //credit entry
-                    $credit_entryitem = new \App\Models\Entryitem();
-                    $credit_entryitem->entry_id = $entry->id;
-                    $credit_entryitem->user_id = \Auth::user()->id;
-                    $credit_entryitem->org_id = \Auth::user()->org_id;
-                    $credit_entryitem->dc = 'C';
-                    $credit_entryitem->ledger_id = $costitem->credit_account_ledger_id;
-                    $credit_entryitem->amount = $costitem->amount;
-                    $credit_entryitem->is_additional_cost =1;
-                    $credit_entryitem->narration = 'Import purchase '.$costitem->cost_type .' cost added';
-                    $credit_entryitem->save();
-                    $cr_amount+=$costitem->amount;
+                    // $credit_entryitem = new \App\Models\Entryitem();
+                    // $credit_entryitem->entry_id = $entry->id;
+                    // $credit_entryitem->user_id = \Auth::user()->id;
+                    // $credit_entryitem->org_id = \Auth::user()->org_id;
+                    // $credit_entryitem->dc = 'C';
+                    // $credit_entryitem->ledger_id = $costitem->credit_account_ledger_id;
+                    // $credit_entryitem->amount = $costitem->amount* $purchaseorderdetail[$i]['qty_invoiced']??'';
+                    // $credit_entryitem->is_additional_cost =1;
+                    // $credit_entryitem->narration = 'Import purchase '.$costitem->cost_type .' cost added';
+                    // $credit_entryitem->save();
+                    // $cr_amount+=$costitem->amount;
+
+                    $i++;
                 }
                 $dr_amount+=$entry->dr_total;
                 $cr_amount+=$entry->cr_total;
