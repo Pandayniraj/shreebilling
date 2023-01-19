@@ -61,7 +61,13 @@
                         <div class="col-md-12">
                             <label>Users</label>
                             <div class="form-group">
-                                {!! Form::select('user_id',$users,isset($request['user_id']), ['class'=>'form-control searchable','placeholder'=>'Select Users']) !!}
+                                <select name="user_id" class="form-control">
+                                    <option value="">Select user</option>
+                                    @foreach ($users as $key=> $user )
+                                        <option value={{ $key }}>{{ $user }}</option>
+                                    @endforeach
+                                </select>
+                                {{-- {!! Form::select('user_id',$users,isset($request['user_id']), ['class'=>'form-control searchable','placeholder'=>'Select Users']) !!} --}}
                             </div>
                         </div>
                     </div>

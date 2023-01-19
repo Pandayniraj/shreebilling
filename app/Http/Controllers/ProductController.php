@@ -655,10 +655,8 @@ class ProductController extends Controller
             $q->where('product_stock_moves.trans_type',$trans_type);
         })
         ->orderBy('product_stock_moves.tran_date', 'DESC')
-        ->paginate(40);
-        // dd($request->export);
-        // dd($transations);
-
+       
+        ->get();
         if ($request->export){
 
             $transations = \App\Models\StockMove::select('product_stock_moves.*', 'products.name', 'pos_outlets.name as storename', 'products.id as pid')
@@ -839,7 +837,6 @@ class ProductController extends Controller
                     $stockMove->order_no = $stock_adjustment->id;
                     $stockMove->tran_date = $request->transaction_date;
                     $stockMove->user_id = \Auth::user()->id;
-
 
                     $stockMove->trans_type = $request_reason->trans_type;
                     $stockMove->reference = $request_reason->name . '_' . $stock_adjustment->id;
@@ -1478,11 +1475,7 @@ public function product_statement(Request $request){
     ->pluck('name', 'id');
 
     $current_product = $request->product_id;
-
-
-
     $transations = \App\Models\StockMove::where(function($query) use ($current_product){
-
         return $query->where('stock_id',$current_product);
     })->where(function($query){
 
@@ -1495,9 +1488,6 @@ public function product_statement(Request $request){
 
 
         }
-
-
-
     })
 
     ->orderBy('id');
@@ -1511,11 +1501,7 @@ public function product_statement(Request $request){
     }
     $transations = $transations->paginate(50);
 
-        // ->paginate(50);
-
     $isExcel = false;
-
-
     return view('admin.products.statement', compact('transations','page_description','page_title','products','current_product','transations','isExcel'));
 
 }
@@ -1641,7 +1627,6 @@ public function stocksOverview()
 
         $current_fiscal = \App\Models\Fiscalyear::where('current_year', 1)->first();
 
-
         $fiscal_year = request()->fiscal_year ? request()->fiscal_year : $current_fiscal->fiscal_year;
 
         $op = \Request::get('op');
@@ -1697,7 +1682,6 @@ public function stocksOverview()
                     })->pluck('id'))//opening stock only
                ->first();
                 $records[$category_name][$product->name]['opening']=$opening_detail;
-
                 $purchase_receipt=\App\Models\PurchaseOrderDetail::select(DB::raw("SUM(quantity_recieved) as quantity, SUM(total) as total,AVG(unit_price) as rate"))
                 ->where('product_id',$product->id)
                 ->whereIn('order_no',\App\Models\PurchaseOrder::where('into_stock_location',$current_store)

@@ -11,18 +11,20 @@
                         <th class="text-center">Location</th>
                         <th class="text-center">Quantity In</th>
                         <th class="text-center">Quantity Out</th>
-                        <th class="text-center"> <i class="fa fa- fa-hand-paper-o"></i> On Hand</th>
+                        <th class="text-center"> <i class="fa fa- fa-hand-paper-o"></i>  On Hand (BottleWise) </th>
+                        <th class="text-center"> <i class="fa fa- fa-hand-paper-o"></i>On Hand (Case-Wise)</th>
+
                     </tr>
                     </thead>
                         <tbody>  
                      <?php
                     $sum = 0;
+                    $sumbottlewise=0;
                     $StockIn = 0;
                     $StockOut = 0;
                     ?>
                     @if(count($transations)>0)
                     @foreach($transations as $result)
-
                         <?php 
                            $reasons = \App\Models\AdjustmentReason::all();
 
@@ -89,9 +91,9 @@
                       <td align="center">{{$result->location_name}}</td>
                       <td align="center">
                         @if($result->qty >0) 
-                          {{$result->qty}}
+                          {{$result->qty * $result->unit->qty_count}}
                           <?php
-                          $StockIn +=$result->qty;
+                          $StockIn +=$result->qty * $result->unit->qty_count ;
                           ?>
                         @else
                         -
@@ -99,18 +101,25 @@
                       </td>
                       <td align="center">
                         @if($result->qty <0 )
-                          {{str_ireplace('-','',$result->qty)}} 
+                          {{str_ireplace('-','',$result->qty * $result->unit->qty_count)}} 
                           <?php
-                          $StockOut +=$result->qty;
+                          $StockOut +=$result->qty * $result->unit->qty_count;
                           ?>
                         @else
                         -
                         @endif
                       </td>
-                      <td align="center">{{$sum += $result->qty}}</td>
+                     
+                      <td align="center">{{$sumbottlewise += $result->qty * $result->unit->qty_count}}</td>
+                      <?php
+								      $unitid= \App\Models\Product::where('id', $result->stock_id)->first()->product_unit;
+								      $unitqty= \App\Models\ProductsUnit::where('id', $unitid)->first()->qty_count;
+								      $sum=$sumbottlewise/$unitqty;
+							?>
+                      <td align="center">{{number_format($sum, 2) }}</td>
                     </tr>
                     @endforeach
-                     <tr><td colspan="7" align="right">Total</td><td align="center">{{$StockIn}}</td><td align="center">{{str_ireplace('-','',$StockOut)}}</td><td align="center">{{$StockIn+$StockOut}}</td></tr>
+                     <tr><td colspan="7" align="right">Total</td><td align="center">{{$StockIn}}</td><td align="center">{{str_ireplace('-','',$StockOut)}}</td><td align="center">{{$StockIn+$StockOut}}</td><td align="center">{{number_format($sum,2)}}</td></tr>
                     @else
                     <tr>
                         <td colspan="9" class="text-center text-danger">No Transaction Yet</td>

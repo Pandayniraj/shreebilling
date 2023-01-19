@@ -115,6 +115,7 @@
             $total_closing_total=0;
         @endphp
         @foreach ($records as $category=>$product)
+        @dd($records);
             <tr>
                 <td colspan="22" style="text-align: left; font-weight: bold;  color: black; border: 1px solid black; background-color: #FFFF00;">
                 {{$category}}

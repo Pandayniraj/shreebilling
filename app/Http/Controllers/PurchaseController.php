@@ -3,15 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
-use App\Models\Audit as Audit;
 use App\Models\Client;
-use App\Models\Contact;
-use App\Models\Lead;
 use App\Models\MasterComments;
-use App\Models\OrderDetail;
-use App\Models\Orders;
-use App\Models\Orders as Order;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderDetail;
@@ -426,6 +419,7 @@ class PurchaseController extends Controller
     public function store(Request $request)
     {
         $totalpurchaseprice=0;
+        $totalpricewithimport=0;
         $totaltax=0;
         $order_attributes = $request->all();
         if ($request->datetype == 'nep') {
@@ -442,10 +436,6 @@ class PurchaseController extends Controller
         $order_attributes['supplier_id'] = $request->customer_id;
         $order_attributes['tax_amount'] = $request->taxable_tax;
         $order_attributes['taxable_amount'] = $request->taxable_amount;
-        // if($request->is_import!=1){
-        // $order_attributes['total'] = $request->final_total;
-        // }
-        // $order_attributes['total_excise_duty']= $request->total_excise_duty;
         $order_attributes['ledger_id'] = (\App\Models\Client::find($request->customer_id))->ledger_id;
         $order_attributes['fiscal_year'] = $fiscal_year->fiscal_year;
         $order_attributes['fiscal_year_id'] = $fiscal_year->id;
@@ -479,12 +469,13 @@ class PurchaseController extends Controller
                 $detail->product_id = $product_id[$key];
                 $detail->unit_price = $price[$key];
                 $detail->unitpricewithimport = $landing_price;
-                $totalpurchaseprice+=$detail->unitpricewithimport;
+               $totalpricewithimport = $detail->unitpricewithimport;
                 $detail->qty_invoiced = $quantity[$key];
                 $detail->quantity_ordered = $quantity[$key];
                 $detail->quantity_recieved = $quantity[$key];
                 $detail->tax_type_id = $tax[$key];
                 $detail->total = $total[$key];
+                $totalpurchaseprice+=$detail->total;
                 $detail->units = $request->units[$key];
                 // $detail->excise_amount = $request->excise_amount[$key] ?? 0;
                 if($purchaseorder->is_import==1){
@@ -509,11 +500,12 @@ class PurchaseController extends Controller
                 $detail->is_inventory = 1;
                 $detail->rmb =$request->rmb[$key]??'';
                 $detail->save();
-                $purchaseorder->update(['total'=>$totalpurchaseprice+$totaltax, 'tax_amount'=>$totaltax]);
+                $purchaseorder->update(['total'=>$totalpurchaseprice+$totaltax,'unitpricewithimport'=>$totalpricewithimport ,'tax_amount'=>$totaltax]);
                 // stockMove information
                 //dd($request->all());
                 $stockMove = new StockMove();
                 $stockMove->stock_id = $product_id[$key];
+                $stockMove->unit_id = $request->units[$key];
                 $stockMove->trans_type = PURCHINVOICE;
                 $stockMove->tran_date = $request->bill_date;
                 $stockMove->user_id = \Auth::user()->id;
@@ -738,7 +730,9 @@ class PurchaseController extends Controller
                 'purchase_type' => 'required',
             ]);
         }
-
+        $totalpurchaseprice=0;
+        $totalpricewithimport=0;
+        $totaltax=0;
         DB::beginTransaction();
         $purchaseorder = $this->purchaseorder->find($id);
 
@@ -762,6 +756,7 @@ class PurchaseController extends Controller
             $order_attributes['tax_amount'] = $request->taxable_tax;
             $order_attributes['total'] = $request->final_total;
             $order_attributes['tds_amount']= $request->tds_total;
+            $order_attributes['purchase_type']  ='bills';
             // $order_attributes['total_excise_duty']=$request->total_excise_duty;
             $order_attributes['netpayable']= $request->netpayable;
             $order_attributes['ledger_id'] = (\App\Models\Client::find($request->customer_id))
@@ -775,10 +770,7 @@ class PurchaseController extends Controller
                 $stockmove = StockMove::where('trans_type', PURCHINVOICE)->where('stock_id', $pd->product_id)->where('reference', 'store_in_' . $purchaseorder->id)->delete();
             }
             //dd($stockmove);
-
             $purchasedetails = PurchaseOrderDetail::where('order_no', $purchaseorder->id)->delete();
-
-            PurchaseOrderDetail::where('order_no', $purchaseorder->id)->delete();
 
             $product_id = $request->product_id;
 
@@ -802,12 +794,19 @@ class PurchaseController extends Controller
                     $detail->product_id = $product_id[$key];
                     $detail->unit_price = $price[$key];
                     $detail->unitpricewithimport = $landing_price;
+                    $totalpricewithimport+= $detail->unitpricewithimport;
                     $detail->qty_invoiced = $quantity[$key];
                     $detail->quantity_ordered = $quantity[$key];
                     $detail->quantity_recieved = $quantity[$key];
                     $detail->tax_type_id = $tax[$key];
                     $detail->units = $request->units[$key];
-                    $detail->tax_amount = $tax_amount[$key];
+                    if($purchaseorder->is_import==1){
+                        $detail->tax_amount = $landing_price*0.13; 
+                    }
+                    else{
+                        $detail->tax_amount = $tax_amount[$key];
+                    }
+                    $totaltax+=  $detail->tax_amount;
                     $detail->tds_amount = $request->tds_amount[$key];
                     // $detail->excise_amount = $request->excise_amount[$key] ?? 0;
                     $detail->tds_rate= $request->tds_per[$key];
@@ -820,18 +819,20 @@ class PurchaseController extends Controller
                     $detail->insurance = $request->insurance[$key]??0;
                     $detail->commission = $request->commission[$key]??0;
                     $detail->unit_total = $request->unit_price[$key]??0;
-
                     $detail->total = $total[$key];
+                    $totalpurchaseprice+=$detail->total;
                     $detail->rmb =$request->rmb[$key]??0;
                     $detail->is_inventory = 1;
                     // $detail->date = date('Y-m-d H:i:s');
                     $detail->save();
+                $purchaseorder->update(['total'=>$totalpurchaseprice+$totaltax,'unitpricewithimport'=>$totalpricewithimport ,'tax_amount'=>$totaltax]);
 
                     // stockMove information
 
                     $stockMove = new StockMove();
                     $stockMove->stock_id = $product_id[$key];
                     $stockMove->trans_type = PURCHINVOICE;
+                    $stockMove->unit_id = $request->units[$key];
                     $stockMove->tran_date = $request->bill_date;
                     $stockMove->user_id = \Auth::user()->id;
                     $stockMove->reference = 'store_in_' . $request->order_no;
@@ -1018,12 +1019,7 @@ class PurchaseController extends Controller
                 }
             }
         }
-        
-            if (\Request::get('purchase_type') == 'bills' || \Request::get('purchase_type') == 'assets' || \Request::get('purchase_type')== 'services') {
-                
-                $this->updateEntries($id);
-             }
-
+        $this->updateEntries($id);
             DB::commit();
 
             Flash::success('Purcahse updated Successfully.');
@@ -1474,6 +1470,11 @@ class PurchaseController extends Controller
         $data = json_decode(json_encode($excel), true);   
             return \Excel::download(new \App\Exports\PurchasedetailExcelExport($data,'purchase detailexcel'), "purchaseDetailexcel.xls");  
     }
+    public function overallexcel(){
+        $excel= PurchaseOrder::with('product_details.product','product_details.units','client', )->get();
+        $data = json_decode(json_encode($excel), true);   
+            return \Excel::download(new \App\Exports\PurchasedetailExcelExport($data,'purchase detailexcel'), "purchaseDetailexcel.xls");  
+    }
     private function createproductentries($purchaseorder, $entry)
     {
         $products = \App\Models\PurchaseOrderDetail::where('order_no', $purchaseorder->id)->where('is_inventory', '1')->get();
@@ -1519,8 +1520,8 @@ class PurchaseController extends Controller
             $attributes['org_id'] = \Auth::user()->org_id;
             $attributes['number'] = \FinanceHelper::get_last_entry_number($attributes['entrytype_id']);
             $attributes['date'] = $purchaseorder->bill_date;
-            $attributes['dr_total'] = $purchaseorder->total;
-            $attributes['cr_total'] = $purchaseorder->total;
+            $attributes['dr_total'] = $purchaseorder->unitpricewithimport+$purchaseorder->tax_amount;
+            $attributes['cr_total'] = $purchaseorder->unitpricewithimport+$purchaseorder->tax_amount;
             $attributes['source'] = 'AUTO_PURCHASE_ORDER';
             $attributes['bill_no'] = $purchaseorder->bill_no;
             $attributes['ref_id'] = $purchaseorder->id;
@@ -1529,7 +1530,8 @@ class PurchaseController extends Controller
             $entry->update($attributes);
 
             // Creddited to Customer or Interest or eq ledger
-            $sub_amount = \App\Models\Entryitem::where('entry_id', $purchaseorder->entry_id)->where('dc', 'C')->first();
+            $remove = \App\Models\Entryitem::where('entry_id', $purchaseorder->entry_id)->delete();
+            $sub_amount = new \App\Models\Entryitem();
             $sub_amount->entry_id = $entry->id;
             $sub_amount->user_id = \Auth::user()->id;
             $sub_amount->org_id = \Auth::user()->org_id;
@@ -1538,9 +1540,9 @@ class PurchaseController extends Controller
             $sub_amount->amount = $purchaseorder->total;
             $sub_amount->narration = 'Amount to pay to supplier'; //$request->user_id
             //dd($sub_amount);
-            $sub_amount->update();
+            $sub_amount->save();
 
-            $productids=\App\Models\PurchaseOrderDetail::where('order_no', $purchaseorder->id)->select('product_id','tds_amount','total','tax_amount')->get();
+            $productids=\App\Models\PurchaseOrderDetail::where('order_no', $purchaseorder->id)->select('product_id','tds_amount','total','tax_amount', 'qty_invoiced')->get();
        
             foreach($productids as $id){
                 
@@ -1604,7 +1606,8 @@ class PurchaseController extends Controller
                 $tax_amount->narration = 'Vendor Tax Amount';
                 $tax_amount->save();
             }
-
+            $purchaseorderdetail=$productids->toArray();
+            $i=0;
             if($purchaseorder->is_import==1){
                 $dr_amount=0;
                 $cr_amount=0;
@@ -1618,11 +1621,10 @@ class PurchaseController extends Controller
                     $debit_entryitem->org_id = \Auth::user()->org_id;
                     $debit_entryitem->dc = 'D';
                     $debit_entryitem->ledger_id = $costitem->debit_account_ledger_id;
-                    $debit_entryitem->amount = $costitem->amount;
+                    $debit_entryitem->amount = $costitem->amount * $purchaseorderdetail[$i]['qty_invoiced']??'';
                     $debit_entryitem->is_additional_cost = 1;
                     $debit_entryitem->narration = 'Import purchase '.$costitem->cost_type .' cost added';
                     $debit_entryitem->save();
-                    $dr_amount+=$costitem->amount;
 
                     //credit entry
                     $credit_entryitem = new \App\Models\Entryitem();
@@ -1631,12 +1633,14 @@ class PurchaseController extends Controller
                     $credit_entryitem->org_id = \Auth::user()->org_id;
                     $credit_entryitem->dc = 'C';
                     $credit_entryitem->ledger_id = $costitem->credit_account_ledger_id;
-                    $credit_entryitem->amount = $costitem->amount;
+                    $credit_entryitem->amount = $costitem->amount * $purchaseorderdetail[$i]['qty_invoiced']??'';
                     $credit_entryitem->is_additional_cost =1;
                     $credit_entryitem->narration = 'Import purchase '.$costitem->cost_type .' cost added';
                     $credit_entryitem->save();
-                    $cr_amount+=$costitem->amount;
+                    $i++;
                 }
+                $dr_amount+=$entry->dr_total;
+                $cr_amount+=$entry->cr_total;
                 $entry_update=\App\Models\Entry::where('id',$entry->id)->update(['dr_total'=>$dr_amount,'cr_total'=>$cr_amount]);
 
             }
@@ -1650,8 +1654,8 @@ class PurchaseController extends Controller
             $attributes['org_id'] = \Auth::user()->org_id;
             $attributes['number'] = \FinanceHelper::get_last_entry_number($attributes['entrytype_id']);
             $attributes['date'] = $purchaseorder->bill_date;
-            $attributes['dr_total'] = $purchaseorder->total;
-            $attributes['cr_total'] = $purchaseorder->total;
+            $attributes['dr_total'] = $purchaseorder->unitpricewithimport+$purchaseorder->tax_amount;
+            $attributes['cr_total'] = $purchaseorder->unitpricewithimport+$purchaseorder->tax_amount;
             $attributes['bill_no'] = $purchaseorder->bill_no;
             $attributes['ref_id'] = $purchaseorder->id;
             $attributes['source'] = 'AUTO_PURCHASE_ORDER';
@@ -1747,29 +1751,7 @@ class PurchaseController extends Controller
                 $tax_amount->narration = 'Vendor Tax Amount';
                 $tax_amount->save();
             }
-            // Debitte to Bank or cash account that we are already in
-            // if ($purchaseorder->purchase_type == 'assets') {
-            //     $this->createproductentries($purchaseorder, $entry);
-            // }
-            // elseif($purchaseorder->purchase_type == 'services'){
-            //     $this->createproductentries($purchaseorder, $entry);
-            // } elseif($purchaseorder->purchase_type == 'bills'){
-            //     $this->createproductentries($purchaseorder, $entry);
-            // } else {
-            //     $cash_amount = new \App\Models\Entryitem();
-            //     $cash_amount->entry_id = $entry->id;
-            //     $cash_amount->user_id = \Auth::user()->id;
-            //     $cash_amount->org_id = \Auth::user()->org_id;
-            //     $cash_amount->dc = 'D';
-            //     $cash_amount->ledger_id = \FinanceHelper::get_ledger_id('PURCHASE_LEDGER_ID'); // Purchase ledger if selected or ledgers from .env
-            //     $cash_amount->amount = $totalAmountBeforeTax;
-            //     $cash_amount->narration = 'Actual Cost';
-            //     $cash_amount->save();
-            // }
-          
-
-          
-
+        
             //now update entry_id in income row
             $purchaseorder->update(['entry_id' => $entry->id]);
             $purchaseorderdetail=$productids->toArray();
@@ -1794,18 +1776,17 @@ class PurchaseController extends Controller
                     $debit_entryitem->save();
 
                     //credit entry
-                    // $credit_entryitem = new \App\Models\Entryitem();
-                    // $credit_entryitem->entry_id = $entry->id;
-                    // $credit_entryitem->user_id = \Auth::user()->id;
-                    // $credit_entryitem->org_id = \Auth::user()->org_id;
-                    // $credit_entryitem->dc = 'C';
-                    // $credit_entryitem->ledger_id = $costitem->credit_account_ledger_id;
-                    // $credit_entryitem->amount = $costitem->amount* $purchaseorderdetail[$i]['qty_invoiced']??'';
-                    // $credit_entryitem->is_additional_cost =1;
-                    // $credit_entryitem->narration = 'Import purchase '.$costitem->cost_type .' cost added';
-                    // $credit_entryitem->save();
+                    $credit_entryitem = new \App\Models\Entryitem();
+                    $credit_entryitem->entry_id = $entry->id;
+                    $credit_entryitem->user_id = \Auth::user()->id;
+                    $credit_entryitem->org_id = \Auth::user()->org_id;
+                    $credit_entryitem->dc = 'C';
+                    $credit_entryitem->ledger_id = $costitem->credit_account_ledger_id;
+                    $credit_entryitem->amount = $costitem->amount* $purchaseorderdetail[$i]['qty_invoiced']??'';
+                    $credit_entryitem->is_additional_cost =1;
+                    $credit_entryitem->narration = 'Import purchase '.$costitem->cost_type .' cost added';
+                    $credit_entryitem->save();
                     // $cr_amount+=$costitem->amount;
-
                     $i++;
                 }
                 $dr_amount+=$entry->dr_total;

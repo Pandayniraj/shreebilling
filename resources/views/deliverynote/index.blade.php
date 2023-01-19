@@ -81,7 +81,7 @@
                                                     {{ \App\Models\Client::where('id', $o->client_id)->first()->name }}
                                                 </span></td>
                                             <td>{{ date('D dS M y', strtotime($o->sales_bill_date)) }}</td>
-                                            <td>{!! number_format($o->total_amount, 2) !!}</td>
+                                            <td>{!! number_format($o->subtotal, 2) !!}</td>
                                             <td>
                                                 <a href="/admin/deliverynote/print/{{ $o->id }}" target="_blank"
                                                     title="print"><i class="fa fa-print"></i></a>

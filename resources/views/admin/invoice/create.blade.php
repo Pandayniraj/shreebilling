@@ -494,6 +494,7 @@
 
     $(document).on('change', '.product_id', function() {
         var parentDiv = $(this).parent().parent();
+        
         if (this.value != 'NULL') {
             var _token = $('meta[name="csrf-token"]').attr('content');
             $.ajax({
@@ -556,7 +557,7 @@
                     parentDiv.find('.total').val(total.toFixed(2));
                     calcTotal();
                 }
-                //console.log( index + ": " + $(this).text() );
+               
             });
         } else {
             $('.total').val('0');
@@ -570,7 +571,48 @@
             $('#physical_address').val(data.physical_address);
         });
     });
+    $(document).on('change', '.units', function(){
+        var parentDiv = $(this).parent().parent();
+        var price=parentDiv.find('.price').val();
+        var productid=parentDiv.find('.product_id').val();
+    
+        if (this.value != 'NULL') {
+            var _token = $('meta[name="csrf-token"]').attr('content');
+            $.ajax({
+                type: "GET"
+                , contentType: "application/json; charset=utf-8"
+                , url: "/admin/new_unit_price",
+                data: { productId:this.value, id:productid },
+                dataType: 'json',
+                 success: function(result) {
+                    var obj = jQuery.parseJSON(result.data);
+                    parentDiv.find('.price').val(obj);
+                    if (isNumeric(parentDiv.find('.quantity').val()) && parentDiv.find('.quantity').val() != '') {
+                        var total = parentDiv.find('.quantity').val() * obj - parentDiv.find('.discount_amount_line').val();
+                    } else {
+                        var total = obj - parentDiv.find('.discount_amount_line').val();
+                    }
 
+                    var tax = parentDiv.find('.tax_rate_line').val();
+                    
+                    if (isNumeric(tax) && tax != 0 && (total != 0 || total != '')) {
+                        tax_amount = total * Number(tax) / 100;
+                        parentDiv.find('.tax_amount_line').val(tax_amount);
+                        total = total - parentDiv.find('.discount_amount_line').val();
+                    } else
+                        parentDiv.find('.tax_amount_line').val('0');
+
+                    parentDiv.find('.total').val(total);
+                    calcTotal();
+                }
+            });
+        } else {
+            parentDiv.find('.price').val('');
+            parentDiv.find('.total').val('');
+            parentDiv.find('.tax_amount').val('');
+            calcTotal();
+        }
+});
     $(document).on('change', '.quantity', function() {
         var parentDiv = $(this).parent().parent();
         if (isNumeric(this.value) && this.value != '') {
@@ -580,20 +622,15 @@
                 var total = '';
         } else
             var total = '';
-
         var tax = parentDiv.find('.tax_rate_line').val();
-        console.log(tax);
         if (isNumeric(tax) && tax != 0 && (total != 0 || total != '')) {
             if(tax && tax==""){
             tax_amount = total * 0.13;
             }else{
                 tax_amount= total * Number(tax) / 100
             }
-            console.log('qcheck');
-            console.log(tax_amount);
-
             parentDiv.find('.tax_amount_line').val(tax_amount.toFixed(2));
-            total = total - parentDiv.find('.discount_amount_line').val();
+            total = total;
         } else
             parentDiv.find('.tax_amount_line').val('0');
 
@@ -617,9 +654,7 @@
             }else{
                 tax_amount= total * Number(tax) / 100
             }
-            console.log('pcheck');
-
-            console.log(tax_amount);
+           
             parentDiv.find('.tax_amount_line').val(tax_amount.toFixed(2));
             total = total- parentDiv.find('.discount_amount_line').val();
         } else
@@ -740,11 +775,11 @@ function adjustTax(ev){
         let total = Number(parent.find('.total').val());
 
         let discount = Number(parent.find('.discount_amount_line').val());
-        console.log(discount);
+       
         let total_with_discount = total - discount;
 
         parent.find('.total').val(total_with_discount);
-        console.log(total_with_discount);
+       
         let tax_rate = Number(parent.find('.tax_rate_line').val());
 
         let tax_amount = (tax_rate / 100 * total_with_discount);
@@ -768,7 +803,7 @@ function adjustTax(ev){
 					var total = '';
 
 					var tax = $(this).val();
-                    console.log(tax);
+                  
                    
 					if (isNumeric(tax) && tax != 0 && (total != 0 || total != '')) {
 						tax_amount = total * Number(tax) / 100;
@@ -940,7 +975,7 @@ function adjustTax(ev){
                 return false;
             }
         }
-        console.log($('#myinvoiceform'))
+        
         $('#myinvoiceform').submit()
         return true;
     }

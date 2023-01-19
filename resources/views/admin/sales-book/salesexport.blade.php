@@ -10,7 +10,7 @@
             <th colspan="15" style="text-align:center; font-size:16px font-weight:bold;"></th>
         </tr>
         <tr>
-            <th colspan="15" style="border: 1px solid; text-align:center; font-size:16px font-weight:bold;">करदाता दर्ता नं(PAN):603413805  करदाताको नाम:डि. टेक ट्रेडिंग  साल:  कर अवधि:</th>
+            <th colspan="15" style="border: 1px solid; text-align:center; font-size:16px font-weight:bold;">करदाता दर्ता नं(PAN):{{ \Auth::user()->organization->vat_id??'' }}  करदाताको नाम:{{ \Auth::user()->organization->organization_name??'' }}  साल:<?php ?>{{ \App\Models\Fiscalyear::orderBy('id', 'desc')->first()->fiscal_year??''}}  कर अवधि:</th>
         </tr>
         <tr>
             <th colspan="7" style="border: 1px solid; text-align:center; font-size:12px; background-color:#999898;">बीजक</th>
@@ -46,27 +46,27 @@
         @endphp
         @foreach ($data as $item)
         <tr>
-            <td style="border: 1px solid; text-align:center;">{{$item['Bill Date']}}</td>
-            <td style="border: 1px solid; text-align:center;" >{{$item['Bill No']}}</td>
+            <td style="border: 1px solid; text-align:center;">{{str_replace("-", ".",\App\Helpers\TaskHelper::getNepaliDate($item['Bill Date']))}}</td>
+            <td style="border: 1px solid; text-align:center;" >{{trim($item['Bill No'], 'MN')}}</td>
             <td style="border: 1px solid; text-align:center;">{{$item['Customer Name']}}</td>
             <td style="border: 1px solid; text-align:center;">{{$item['Customer PAN']}}</td>
             <td style="border: 1px solid; text-align:center;">-</td>
             <td style="border: 1px solid; text-align:center;">-</td>
             <td style="border: 1px solid; text-align:center;"></td>
-            <td style="border: 1px solid; text-align:center;">{{$item['Total Sales']}}</td>
+            <td style="border: 1px solid; text-align:center;">{{$item['Taxable Amount'] + $item['Non Tax Sales']??0 }}</td>
             <td style="border: 1px solid; text-align:center;">{{ $item['Non Tax Sales'] }}</td>
             <td style="border: 1px solid; text-align:center;">{{$item['Taxable Amount']}}</td>
-            <td style="border: 1px solid; text-align:center;">{{ $item['Tax'] }}</td>
+            <td style="border: 1px solid; text-align:center;">{{ $item['TAX'] }}</td>
             <td style="border: 1px solid; text-align:center;">-</td>
             <td style="border: 1px solid; text-align:center;">-</td>
             <td style="border: 1px solid; text-align:center;">-</td>
             <td style="border: 1px solid; text-align:center;">-</td>
         </tr>
         @php
-        $totalsalesamount +=$item['Total Sales'];
+        $totalsalesamount +=$item['Taxable Amount'] + $item['Non Tax Sales']??0;
         $totalnontaxsales+=$item['Non Tax Sales'];
         $total_taxable_amount+=$item['Taxable Amount'];
-        $total_tax+=$item['Tax'];
+        $total_tax+=$item['TAX'];
         @endphp
         @endforeach
         <tr>

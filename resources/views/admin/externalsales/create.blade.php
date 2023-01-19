@@ -526,7 +526,48 @@
             calcTotal();
         }
     });
+    $(document).on('change', '.units', function(){
+        var parentDiv = $(this).parent().parent();
+        var price=parentDiv.find('.price').val();
+        var productid=parentDiv.find('.product_id').val();
+    
+        if (this.value != 'NULL') {
+            var _token = $('meta[name="csrf-token"]').attr('content');
+            $.ajax({
+                type: "GET"
+                , contentType: "application/json; charset=utf-8"
+                , url: "/admin/new_unit_price",
+                data: { productId:this.value, id:productid },
+                dataType: 'json',
+                 success: function(result) {
+                    var obj = jQuery.parseJSON(result.data);
+                    parentDiv.find('.price').val(obj);
+                    if (isNumeric(parentDiv.find('.quantity').val()) && parentDiv.find('.quantity').val() != '') {
+                        var total = parentDiv.find('.quantity').val() * obj - parentDiv.find('.discount_amount_line').val();
+                    } else {
+                        var total = obj - parentDiv.find('.discount_amount_line').val();
+                    }
 
+                    var tax = parentDiv.find('.tax_rate_line').val();
+                    
+                    if (isNumeric(tax) && tax != 0 && (total != 0 || total != '')) {
+                        tax_amount = total * Number(tax) / 100;
+                        parentDiv.find('.tax_amount_line').val(tax_amount);
+                        total = total - parentDiv.find('.discount_amount_line').val();
+                    } else
+                        parentDiv.find('.tax_amount_line').val('0');
+
+                    parentDiv.find('.total').val(total);
+                    calcTotal();
+                }
+            });
+        } else {
+            parentDiv.find('.price').val('');
+            parentDiv.find('.total').val('');
+            parentDiv.find('.tax_amount').val('');
+            calcTotal();
+        }
+});
     $(document).on('change', '.customer_id', function() {
         if (this.value != '') {
             $(".quantity").each(function(index) {
@@ -586,7 +627,7 @@
             console.log(tax_amount);
 
             parentDiv.find('.tax_amount_line').val(tax_amount.toFixed(2));
-            total = total - parentDiv.find('.discount_amount_line').val();
+            total = total;
         } else
             parentDiv.find('.tax_amount_line').val('0');
 

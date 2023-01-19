@@ -6,8 +6,8 @@
 @endsection
 
 @section('content')
-<link href="{{ asset("/bower_components/admin-lte/plugins/datatables/jquery.dataTables.min.css") }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset("/bower_components/admin-lte/plugins/datatables/dataTables.bootstrap.css") }}" rel="stylesheet" type="text/css" />
+{{-- <link href="{{ asset("/bower_components/admin-lte/plugins/datatables/jquery.dataTables.min.css") }}" rel="stylesheet" type="text/css" /> --}}
+{{-- <link href="{{ asset("/bower_components/admin-lte/plugins/datatables/dataTables.bootstrap.css") }}" rel="stylesheet" type="text/css" /> --}}
 <section class="content-header" style="margin-top: -35px; margin-bottom: 20px">
 	<h1>
 		{!! $page_title ?? "Page title" !!}
@@ -110,7 +110,7 @@
 
 
 	<div style="min-height:200px" class="" id="">
-		<table class="table table-hover table-striped table-responsive" id="clients-table">
+		<table class="table table-hover table-striped table-responsive">
 			<thead>
 				<tr class="bg-purple">
 					<th class="text-center">Id</th>
@@ -119,7 +119,6 @@
 					<th class="text-center">Tran Type</th>
 					<th class="text-center">Date</th>
 					<th class="text-center">Store</th>
-
 					<th class="text-center">In</th>
 					<th class="text-center">Out</th>
 					<th class="text-center bg-primary"> Closing(bottle-wise)</th>
@@ -141,15 +140,16 @@
 				@foreach($transations as $key=> $transation)
 				<?php
 					$sum = 0;
+	
 				?>
 					@foreach($transation as $k=> $result)
 					
 					<?php
 					$StockIn = 0;
-				$StockOut = 0;
+						$StockOut = 0;
 					?>
 				<tr>
-					<td align="center">{{$result->id}}</td>
+					<td align="center">{{$loop->iteration}}</td>
 					<td style="font-size: 16.5px" align="left"><a href="/admin/products/{{$result->pid}}/edit?op=trans" target="_blank"> {{$result->name}}</a></td>
 					<td align="center">{{$result->order_no}}</td>
 					<td align="center">
@@ -185,16 +185,12 @@
 						<?php
 						$qty=0;
 						?>
-							@if($result->trans_type == PURCHINVOICE)	
-							<?php
-								$unitid= \App\Models\Product::where('id', $result->stock_id)->first()->product_unit;
-								$unitqty= \App\Models\ProductsUnit::where('id', $unitid)->first()->qty_count;
-								
-							?>	
-							{{$qty+=$result->qty * $unitqty}}
+							@if($result->trans_type == 101 || $result->trans_type == 102)	
+							{{$qty+=$result->qty * $result->unit->qty_count}}
 							@else
 							{{$qty+=$result->qty}}
 							@endif
+						
 						<?php
 						$StockIn +=$qty;
 						?>
@@ -207,12 +203,9 @@
 						<?php
 						$outqty=0;
 						?>
-							@if($result->trans_type == SALESINVOICE)	
-							<?php
-								$unitid= \App\Models\Product::where('id', $result->stock_id)->first()->product_unit;
-								$unitqty= \App\Models\ProductsUnit::where('id', $unitid)->first()->qty_count;
-							?>	
-							{{ str_ireplace('-','',$outqty+= $result->qty * $unitqty)}}
+							@if($result->trans_type == SALESINVOICE || $result->trans_type == OTHERSALESINVOICE)	
+							
+							{{ str_ireplace('-','',$outqty+= $result->qty * $result->unit->qty_count)}}
 							@else
 							
 							{{str_ireplace('-','',$outqty+= $result->qty)}}
@@ -231,7 +224,7 @@
 						<?php 
 							$sum+=$StockIn+$StockOut;
 						?>	 
-							{{$sum}}
+							{{ $sum }}
 					</td>
 						<td align="center" class="bg-primary">
 							<?php
@@ -241,7 +234,6 @@
 							?>
 							{{number_format($casevalue,2)}}
 						</td>
-				
 					<td>
                         <?php
 
@@ -251,9 +243,7 @@
                             			->where('stock_id',$result->stock_id)
                             			->first();
                         $avg_price = $stock_moves->total_qty!=0?(($stock_moves->total_price)/$stock_moves->total_qty):0;
-
                         ?>
-
                         {{ $avg_price }}
                     </td>
                     <td>
@@ -262,9 +252,9 @@
                         </a>
                     </td>
 				</tr>
+				{{-- {{$result->links}} --}}
 				@endforeach
 				@endforeach
-
 				@else
 				<tr>
 					<td colspan="6" class="text-center text-danger">No Transaction Yet</td>
@@ -274,7 +264,7 @@
 			</tbody>
 		</table>
 		{{-- $transations->appenda($_GET)->link --}}
-		{{-- {!! $transations->append($_GET)->links !!} --}}
+		{{-- {!! $transations->links() !!} --}}
 
 	</div>
 
@@ -284,7 +274,7 @@
 </div>
 <!-- /.tab-content -->
 </div>
-<script src="{{ asset ("/bower_components/admin-lte/plugins/datatables/jquery.dataTables.min.js") }}"></script>
+
 
 <script>
 	$('.datepicker').datetimepicker({

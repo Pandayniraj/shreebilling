@@ -43,7 +43,7 @@
             top: 21px;"><i class="fa fa-print"></i>Export Excel</a>&nbsp;&nbsp;
         </div>
     </div>
-    <div class="row">
+    <div class="row table-responsive" >
 
         <table class="table table-bordered">
             <?php

@@ -15,13 +15,15 @@ class StockMove extends Model
     /**
      * @var array
      */
-    protected $fillable = ['store_id','stock_id', 'order_no', 'trans_type', 'tran_date', 'person_id', 'order_reference', 'reference', 'transaction_reference_id', 'note', 'qty', 'price'];
+    protected $fillable = ['store_id','stock_id', 'order_no','unit_id', 'trans_type', 'tran_date', 'person_id', 'order_reference', 'reference', 'transaction_reference_id', 'note', 'qty', 'price'];
 
     public function user()
     {
         return $this->belongsTo(\App\User::class);
     }
-
+    public function unit(){
+        return $this->belongsTo(\App\Models\ProductsUnit::class, 'unit_id', 'id');
+    }
     public function project()
     {
         return $this->belongsTo(\App\Models\Projects::class);

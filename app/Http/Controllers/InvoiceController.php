@@ -181,9 +181,13 @@ class InvoiceController extends Controller
     // }
     //renewals
     public function excel($id){
+        
         $invoice = Invoice::with(['invoiceDetail.product','invoiceDetail.units', 'client', 'outlet'])->where('id', $id)->get();
-        // dd($invoice);
-        // \TaskHelper::authorizeOrg($invoice);
+        $data = json_decode(json_encode($invoice), true);
+        return \Excel::download(new \App\Exports\TaxInvoiceExport($data,'Tax invoice detail'), "Tax Invoice.xls");
+    }
+    public function overallexcel(){
+        $invoice = Invoice::with(['invoiceDetail.product','invoiceDetail.units', 'client', 'outlet'])->get();
         $data = json_decode(json_encode($invoice), true);
         return \Excel::download(new \App\Exports\TaxInvoiceExport($data,'Tax invoice detail'), "Tax Invoice.xls");
     }
@@ -341,6 +345,7 @@ class InvoiceController extends Controller
                 $stockMove = new \App\Models\StockMove();
 
                 $stockMove->stock_id = $product_id[$key];
+                $stockMove->unit_id = $unit[$key];
                 $stockMove->tran_date = $request->bill_date;
                 $stockMove->user_id = \Auth::user()->id;
                 $stockMove->reference = 'store_out_'.$invoice->id;
@@ -489,9 +494,7 @@ class InvoiceController extends Controller
                 $detail->date = date('Y-m-d H:i:s');
                 $detail->is_inventory = 1;
                 $detail->save();
-
                 // create stockMove
-
                 $stockMove = new \App\Models\StockMove();
 
                 $stockMove->stock_id = $product_id[$key];
@@ -499,6 +502,7 @@ class InvoiceController extends Controller
                 $stockMove->user_id = \Auth::user()->id;
                 $stockMove->reference = 'store_out_'.$id;
                 $stockMove->transaction_reference_id = $id;
+                $stockMove->unit_id = $unit[$key];
                 $stockMove->price=$price[$key];
                 $stockMove->qty = '-'.$quantity[$key];
                 $stockMove->trans_type = OTHERSALESINVOICE;

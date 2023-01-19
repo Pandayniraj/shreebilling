@@ -171,7 +171,8 @@
        $total_amount = $total_amount +  $sal_bks->total_amount;
     ?>
 
-  @if(!$sal_bks->invoicemeta->is_bill_active)
+  @if($sal_bks->invoicemeta->is_bill_active === 0)
+
   <tr>
     <td>{{ date('dS M y', strtotime($sal_bks->bill_date)) }}/<br/>
                               <?php
@@ -186,7 +187,6 @@
                                     
                                          $nepali_date = $d['date'].' '.$d['nmonth'] .', '.$d['year'];
                                         ?>
-
                          <small> {!! $nepali_date !!}</small>
 
                         </td>

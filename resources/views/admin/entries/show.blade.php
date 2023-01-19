@@ -41,6 +41,10 @@
                           <th>Cr Amount (IDR)</th>
                           <th>Narration</th>
                         </tr>
+                        <?php
+                          $drtotal=0;
+                          $crtotal=0;
+                        ?>
                         @foreach($entriesitem as $items)
                         <tr>
                           <td>@if($items->dc == 'D') Dr @else Cr @endif</td>
@@ -56,9 +60,15 @@
                               </table>
                           </td>
                           @if($items->dc == 'D')
+                          <?php
+                          $drtotal+=$items->amount;
+                          ?>
                           <td>{{number_format($items->amount,2)}}</td>
                           <td></td>
                           @else
+                          <?php
+                          $crtotal+=$items->amount;
+                          ?>
                           <td></td>
                           <td>{{number_format($items->amount,2)}}</td>
                           @endif
@@ -68,8 +78,8 @@
                         <tr>
                           <td></td>
                           <td><strong>Total</strong></td>
-                          <td style="font-size: 16.5px"><strong>Dr {{number_format($entries->dr_total,2)}}</strong></td>
-                          <td style="font-size: 16.5px"><strong>Cr {{number_format($entries->cr_total,2)}}</strong></td>
+                          <td style="font-size: 16.5px"><strong>Dr {{number_format($drtotal,2)}}</strong></td>
+                          <td style="font-size: 16.5px"><strong>Cr {{number_format($crtotal,2)}}</strong></td>
                           <td></td>
                         </tr>
 

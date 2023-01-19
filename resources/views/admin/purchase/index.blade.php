@@ -135,6 +135,8 @@ input[type="search"] {
                     <a class="btn btn-default btn-sm btn-height" href="/admin/purchasetrash" title="Purchase trash">
                         <i class="fa fa-trash"></i> Trash
                     </a>
+                    <a class="btn btn-default btn-sm btn-height" href="/admin/purchase/overallexcel" title="Purchase Detail Excel">
+                        <i class="fa fa-table"></i>Purchase-Detail Excel</a>
                     <a  href="/admin/entries/sampleexcel"><button class="btn btn-sm">Download Sample</a>
                     &nbsp;
                 </div>
@@ -161,8 +163,8 @@ input[type="search"] {
 
                     <a href="/admin/download/purchase/pdf/index?type={{\Request::get('type')}}&start_date={{  \Request::get('start_date') }}&end_date={{  \Request::get('end_date') }}&supplier_id={{  \Request::get('supplier_id') }}" class="btn btn-default btn-xs btn-height"><i class="fa fa-file-pdf-o"></i>   PDF</a>
                     &nbsp;
-                    <a href="/admin/download/purchase/excel/index?type={{\Request::get('type')}}&start_date={{  \Request::get('start_date') }}&end_date={{  \Request::get('end_date') }}&supplier_id={{  \Request::get('supplier_id') }}" class="btn btn-default btn-xs btn-height" ><i class="fa  fa-file-excel-o"></i>  Excel</a>
-                    &nbsp;
+                    {{-- <a href="/admin/download/purchase/excel/index?type={{\Request::get('type')}}&start_date={{  \Request::get('start_date') }}&end_date={{  \Request::get('end_date') }}&supplier_id={{  \Request::get('supplier_id') }}" class="btn btn-default btn-xs btn-height" ><i class="fa  fa-file-excel-o"></i>  Excel</a>
+                    &nbsp; --}}
                 </div>
             </div>
            <!--  <div class="wrap" style="margin-top:5px;">

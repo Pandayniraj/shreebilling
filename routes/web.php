@@ -1201,6 +1201,7 @@ Route::group(['middleware' =>  ['iptracker' , 'authorize']], function () {
 
 
         // For Orders
+        Route::get('new_unit_price', ['uses' => 'OrdersController@new_unit_price', 'as' => 'admin.new_unit_price']);
         Route::any('products/GetProductDetailAjax/{productId}', ['uses' => 'OrdersController@getProductDetailAjax', 'as' => 'admin.products.GetProductDetailAjax']);
         Route::post('multiple_orders', ['uses' => 'OrdersController@store', 'as' => 'admin.multiple_orders.store']);
         Route::get('order/print/{id}', ['as' => 'admin.orders.print',  'uses' => 'OrdersController@printInvoice']);
@@ -1261,6 +1262,7 @@ Route::get('invoicetrash', ['as' => 'admin.invoicetrash.index', 'uses' => 'Invoi
         Route::get('invoice1', ['as' => 'admin.invoice.index', 'uses' => 'InvoiceController@index']);
         // Route::get('invoice/detailindex', ['as' => 'admin.invoice.detailindex', 'uses' => 'InvoiceController@detailindex']);
         // Route::get('invoice/detail/{id}', ['as' => 'admin.invoice.detail', 'uses' => 'InvoiceController@detail']);
+        Route::get('invoice/overallexcel',['as' => 'admin.invoice.overallexcel', 'uses' => 'InvoiceController@overallexcel']);
         Route::get('invoice/excel/{id}',['as' => 'admin.invoice.detail', 'uses' => 'InvoiceController@excel']);
         Route::get('invoice/create', ['as' => 'admin.invoice.create', 'uses' => 'InvoiceController@create']);
         Route::post('invoice/create', ['as' => 'admin.invoice.store', 'uses' => 'InvoiceController@store']);
@@ -1290,6 +1292,7 @@ Route::get('invoicetrash', ['as' => 'admin.invoicetrash.index', 'uses' => 'Invoi
         Route::get('purchase/detailindex', ['as' => 'admin.purchase.detailindex',            'uses' => 'PurchaseController@detailindex']);
         Route::get('purchase/detail/{orderId}', ['as' => 'admin.purchase.detail',            'uses' => 'PurchaseController@detail']);
         Route::get('purchase/excel/{id}', ['as' => 'admin.purchase.excel',            'uses' => 'PurchaseController@excel']);
+        Route::get('purchase/overallexcel', ['as' => 'admin.purchase.overallexcel',            'uses' => 'PurchaseController@overallexcel']);
         Route::get('purchase/create', ['as' => 'admin.purchase.create',           'uses' => 'PurchaseController@create']);
         Route::post('purchase', ['as' => 'admin.purchase.store',            'uses' => 'PurchaseController@store']);
         Route::get('purchase/{orderId}/edit', ['as' => 'admin.purchase.edit',             'uses' => 'PurchaseController@edit']);

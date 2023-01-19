@@ -18,7 +18,6 @@
                 <small>{!! $page_description ?? "Page description" !!}</small>
             </h1>
             
-
             {!! MenuBuilder::renderBreadcrumbTrail(null, 'root', false)  !!}
         </section>
 

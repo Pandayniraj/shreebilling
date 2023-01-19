@@ -201,7 +201,9 @@ img {
                     <th>Particulars</th>
                     <th>Qty</th>
                     <th>Unit</th>
-                    <th>Price</th>
+                    <th>Unit-Price</th>
+                    <th>Amount</th>
+                    <th>Discount</th>
                     <th>Sub-Total</th>
                 </tr>
             </thead>
@@ -217,6 +219,8 @@ img {
                     <td>{{ number_format($odv->quantity,2) }}</td>
                     <td>{{ $odv->units->symbol }}</td>
                     <td>{{ number_format($odv->price,2) }}</td>
+                    <td>{{ number_format($odv->quantity * $odv->price, 2) }}</td>
+                    <td>{{ number_format($odv->discount, 2) }}</td>
                     <td>{{ env('APP_CURRENCY').' '.number_format($odv->total,2) }}</td>
                 </tr>
                 @endforeach
@@ -294,8 +298,6 @@ img {
             80 => 'Eighty',
 
             90 => 'Ninety');
-
-
 
         $paise = ($decimal) ?  ' and ' .($words[$decimal - $decimal%10]) ." " .($words[$decimal%10]) .' Paisa'  : '';
         return $paise;
@@ -431,12 +433,12 @@ if (!function_exists('numberFomatter'))   {
         <table class="table">
             <tbody>
                 <tr style="padding:0px; margin:0px;">
-                    <th style="width:70%">Total Amount:</th>
+                    <th style="width:70%">Sub-Total Amount:</th>
                     <td>{{ env('APP_CURRENCY').' '. number_format($ord->non_taxable_amount + $ord->taxable_amount, 2) }}</td>
                 </tr>
                 <tr style="padding:0px; margin:0px;">
-                    <th style="width:50%">Discount:</th>
-                    {{-- <numbertd>{{ env('APP_CURRENCY').' '. number_format($ord->discount_amount,2) }}</td> --}}
+                    <th style="width:50%">Total Discount:</th>
+                    <td>{{ env('APP_CURRENCY').' '. number_format($ord->discount_amount,2) }}</td>
                     </tr>
 
                     <tr style="padding:0px; margin:0px;">
@@ -452,7 +454,7 @@ if (!function_exists('numberFomatter'))   {
                         <td>{{ env('APP_CURRENCY').' '. number_format($ord->tax_amount,2) }}</td>
                     </tr>
                     <tr style="padding:0px; margin:0px;">
-                        <th style="width:50%">Net Amount:</th>
+                        <th style="width:50%">Total Amount:</th>
                         <td><b>{{ env('APP_CURRENCY').' '. number_format($ord->total_amount,2) }}</b></td>
                     </tr>
                 </tbody>

@@ -64,6 +64,9 @@
                         <a href="/admin/invoice1" class="btn btn-sm btn-default" id="btn-filter-clear" >
                             <i class="fa fa-close"></i> Clear
                         </a>
+                        <a href="/admin/invoice/overallexcel" class="btn btn-sm btn-default" id="btn-filter-clear" >
+                            <i class="fa fa-table"></i> Excel
+                        </a>
                     </div>
                     </form>
                 </div>

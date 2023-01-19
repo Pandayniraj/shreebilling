@@ -818,7 +818,6 @@ class OrdersController extends Controller
         if (\Request::get('type')) {
             return redirect('/admin/orders?type=' . \Request::get('type'));
         }
-
         return redirect('/admin/orders?type=quotation');
     }
 
@@ -835,7 +834,29 @@ class OrdersController extends Controller
 
         return ['data' => json_encode($product),'available'=>$available,'units'=>$units,'description'=>$description];
     }
-
+public function new_unit_price(Request $request){
+    $productsellingprice= \App\Models\Product::where('id', $request->id)->first()->price;
+    $unitname= \App\Models\ProductsUnit::where('id', $request->productId)->first()->name;
+    if($unitname=="Bottle12"){
+     $unitqtycount=(float)$productsellingprice/12;    
+    }
+    elseif($unitname == "Bottle24"){
+        $unitqtycount=(float)$productsellingprice/24;
+    }
+    elseif($unitname == "Bottle6"){
+        $unitqtycount=(float)$productsellingprice/6;
+    }
+    elseif($unitname== "Bottle8"){
+        $unitqtycount=(float)$productsellingprice/8;
+    }
+    elseif($unitname=="Bottle10"){
+        $unitqtycount=(float)$productsellingprice/10;
+    }
+    else{
+        $unitqtycount=(float)$productsellingprice/1;
+    }
+    return ['data'=>json_encode($unitqtycount)];
+}
     /**
      * Delete Confirm.
      *

@@ -225,8 +225,6 @@ class SalesAccountController extends Controller
         $unitPrice = $request->total;
         $stock_id = $request->stock_id;
         $description = $request->description;
-        //d($request->all(),1);
-
         // create salesOrder start
         $orderReferenceNo = DB::table('sales_orders')->where('trans_type', SALESORDER)->count();
 
@@ -1049,7 +1047,6 @@ class SalesAccountController extends Controller
         ->when($startdate&&$enddate&&!$request->greater_than_1_lakh,function ($q) use ($enddate, $startdate) {
             $q->orderBy('bill_date','Asc');
         });
-
         if ($op == 'pdf') {
             if($request->greater_than_1_lakh) {
                 $sales_book = $sales_book->orderBy('client_id', 'Desc')->get();

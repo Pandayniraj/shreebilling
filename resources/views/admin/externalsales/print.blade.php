@@ -168,12 +168,11 @@ img {
              </div>
              <!-- /.col -->
              <div class="col-sm-4 invoice-col" style="white-space: nowrap;">
-                <b>Bill No:</b> 079/80-{{ $ord->bill_no }}
+                <b>Quotation No:</b> 079/80-{{ $ord->bill_no }}
                 <br>
 
-                <b>Bill Date:</b> {{ TaskHelper::getNepaliDate($ord->bill_date) }}({{ $ord->bill_date }})<br>
+                <b>Quotation Date:</b> {{ TaskHelper::getNepaliDate($ord->bill_date) }}({{ $ord->bill_date }})<br>
                 <?php $timestamp = strtotime($ord->created_at) ?>
-                <b>Dispatch Date:</b> {{ TaskHelper::getNepaliDate($ord->due_date) }}({{ $ord->due_date }})<br>
                 <b>Sales Order By :</b> {{ $ord->sales_person }} <br>
                 <b>Delivery Note/Quotation :</b> <br>
                 <b>Mode of Payment :</b>  {{ $ord->terms }} 
@@ -199,7 +198,9 @@ img {
                     <th>Particulars</th>
                     <th>Qty</th>
                     <th>Unit</th>
-                    <th>Price</th>
+                    <th>Unit-Price</th>
+                    <th>Amount</th>
+                    <th>Discount</th>
                     <th>Sub-Total</th>
                 </tr>
             </thead>
@@ -212,6 +213,8 @@ img {
                     <td>{{ number_format($odv->quantity,2) }}</td>
                     <td>{{ \App\Models\ProductsUnit::where("id", $odv->unit)->first()->name }}</td>
                     <td>{{ number_format($odv->price,2) }}</td>
+                    <td>{{ number_format($odv->quantity * $odv->price, 2) }}</td>
+                    <td>{{ number_format($odv->discount, 2) }}</td>
                     <td>{{ env('APP_CURRENCY').' '.number_format($odv->total,2) }}</td>
                 </tr>
                 @endforeach
@@ -426,28 +429,15 @@ if (!function_exists('numberFomatter'))   {
         <table class="table">
             <tbody>
                 <tr style="padding:0px; margin:0px;">
-                    <th style="width:70%">Total Amount:</th>
-                    <td>{{ env('APP_CURRENCY').' '. number_format($ord->non_taxable_amount + $ord->taxable_amount, 2) }}</td>
-                </tr>
+                    <th style="width:50%">Sub-Total Amount:</th>
+                    <td>{{ env('APP_CURRENCY').' '. number_format($ord->total_amount,2) }}</td>
+                    </tr>
                 <tr style="padding:0px; margin:0px;">
                     <th style="width:50%">Discount:</th>
-                    {{-- <numbertd>{{ env('APP_CURRENCY').' '. number_format($ord->discount_amount,2) }}</td> --}}
-                    </tr>
-
-                    <tr style="padding:0px; margin:0px;">
-                        <th style="width:50%">Non Taxable Amount:</th>
-                        <td>{{ env('APP_CURRENCY').' '. number_format($ord->non_taxable_amount,2) }}</td>
+                    <td>{{ env('APP_CURRENCY').' '. number_format($ord->discount_amount,2) }}</td>
                     </tr>
                     <tr style="padding:0px; margin:0px;">
-                        <th style="width:50%">Taxable Amount:</th>
-                        <td>{{ env('APP_CURRENCY').' '. number_format($ord->taxable_amount,2) }}</td>
-                    </tr>
-                    <tr style="padding:0px; margin:0px;">
-                        <th style="width:50%">Tax Amount(VAT):</th>
-                        <td>{{ env('APP_CURRENCY').' '. number_format($ord->tax_amount,2) }}</td>
-                    </tr>
-                    <tr style="padding:0px; margin:0px;">
-                        <th style="width:50%">Net Amount:</th>
+                        <th style="width:50%">Total Amount:</th>
                         <td><b>{{ env('APP_CURRENCY').' '. number_format($ord->total_amount,2) }}</b></td>
                     </tr>
                 </tbody>

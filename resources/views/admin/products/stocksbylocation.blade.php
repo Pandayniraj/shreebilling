@@ -82,7 +82,9 @@
 
           <th class="text-center">In</th>
           <th class="text-center">Out</th>
-          <th class="text-center bg-primary"> Closing</th>
+          <th class="text-center bg-primary">Closing</th>
+          <th class="text-center bg-primary">Closing</th>
+
           <th class="text-center">cost/unit</th>
 
         </tr>
@@ -128,7 +130,7 @@
 
           <td align="center">
             @if($result->qty >0 )
-            {{$result->qty}}
+            {{$result->qty * $result->unit->qty_count}}
             <?php
             $StockIn +=$result->qty;
             ?>
@@ -138,7 +140,7 @@
           </td>
           <td align="center">
             @if($result->qty <0 )
-            {{str_ireplace('-','',$result->qty)}}
+            {{str_ireplace('-','',$result->qty * $result->unit->qty_count)}}
             <?php
             $StockOut +=$result->qty;
             ?>
@@ -146,8 +148,13 @@
             -
             @endif
           </td>
-          <td align="center" class="bg-primary">{{ \TaskHelper::new_getTranslations($result->stock_id,$current_store) }}</td>
-
+        <td align="center">{{$sumbottlewise += $result->qty * $result->unit->qty_count}}</td>
+        <?php
+        $unitid= \App\Models\Product::where('id', $result->stock_id)->first()->product_unit;
+        $unitqty= \App\Models\ProductsUnit::where('id', $unitid)->first()->qty_count;
+        $sum=$sumbottlewise/$unitqty;
+?>
+        <td align="center">{{number_format($sum,2)}}</td>
           <td>
                         <?php
 

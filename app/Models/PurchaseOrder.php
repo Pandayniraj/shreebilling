@@ -14,7 +14,7 @@ class PurchaseOrder extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id', 'org_id', 'supplier_id', 'project_id', 'bill_no', 'purchase_type', 'user_id', 'comments', 'ord_date', 'due_date', 'bill_date', 'delivery_date', 'reference', 'status', 'vat_type', 'pan_no', 'into_stock_location', 'subtotal', 'discount_percent', 'discount_amount', 'non_taxable_amount', 'total_tax_amount', 'taxable_amount', 'tax_amount','tds_amount', 'netpayable', 'currency', 'total', 'payment_status', 'ledger_id', 'fiscal_year', 'entry_id', 'is_renewal', 'fiscal_year_id', 'discount_type', 'supplier_type','is_import','country','import_date','document_no'];
+    protected $fillable = ['id', 'org_id', 'supplier_id', 'project_id', 'bill_no', 'purchase_type','unitpricewithimport' ,'user_id', 'comments', 'ord_date', 'due_date', 'bill_date', 'delivery_date', 'reference', 'status', 'vat_type', 'pan_no', 'into_stock_location', 'subtotal', 'discount_percent', 'discount_amount', 'non_taxable_amount', 'total_tax_amount', 'taxable_amount', 'tax_amount','tds_amount', 'netpayable', 'currency', 'total', 'payment_status', 'ledger_id', 'fiscal_year', 'entry_id', 'is_renewal', 'fiscal_year_id', 'discount_type', 'supplier_type','is_import','country','import_date','document_no'];
 
     public function user()
     {

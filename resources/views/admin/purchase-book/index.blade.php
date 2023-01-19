@@ -179,12 +179,11 @@
     <td>{{ $pur_bks->non_taxable_amount }}</td>
     <td></td>
     <td>{{$pur_bks->discount_amount}}</td>
-    <td>{{$pur_bks->taxable_amount}}</td>
+    <td>{{$pur_bks->tax_amount?$pur_bks->taxable_amount:$pur_bks->non_taxable_amount??0}}</td>
     <?php
-      $taxable_amount = $taxable_amount + $pur_bks->taxable_amount;
+      $taxable_amount += $pur_bks->taxable_amount;
       $tax_amount = $tax_amount +  $pur_bks->tax_amount;
       $total_purch  +=  $pur_bks->total;
-
       $totalNontaxPurch += $pur_bks->non_taxable_amount;
       $totalDiscount += $pur_bks->discount_amount;
     ?>
