@@ -102,11 +102,11 @@
            @if(isset($asopeningstock[$product->id][0]->asopeningstock)&&($asopeningstock[$product->id][0]->asopeningstock>0 || $asopeningstock[$product->id][0]->asopeningstock==0))
                 @if($totalremaining[$product->id][0]->totalremainingqty== null || $totalremaining[$product->id][0]->totalremainingqty== "" )
                     <?php 
-                    $openingvalue=(($asopeningstock[$product->id][0]->asopeningstock/$product->unit->qty_count) + 0);
+                    $openingvalue=(($asopeningstock[$product->id][0]->asopeningstock) + 0);
                 ?>
                @else
                <?php 
-               $openingvalue=(($asopeningstock[$product->id][0]->asopeningstock/$product->unit->qty_count) + $totalremaining[$product->id][0]->totalremainingqty);
+               $openingvalue=(($asopeningstock[$product->id][0]->asopeningstock) + $totalremaining[$product->id][0]->totalremainingqty);
                ?>
               @endif
               <?php (double)$openingvalue;
@@ -117,12 +117,11 @@
            
                     @if($totalremaining[$product->id][0]->totalremainingqty== null || $totalremaining[$product->id][0]->totalremainingqty== "" )
                         <?php 
-                        $openingvalue=(($foropening[$product->id][0]->removestock/$product->unit->qty_count) + 0);
+                        $openingvalue=(($foropening[$product->id][0]->removestock) + 0);
                         ?>
                     @else
-                
                         <?php 
-                        $openingvalue=(($foropening[$product->id][0]->removestock/$product->unit->qty_count) + $totalremaining[$product->id][0]->totalremainingqty);
+                        $openingvalue=(($foropening[$product->id][0]->removestock) + $totalremaining[$product->id][0]->totalremainingqty);
                         ?>
                 @endif
                 <?php
@@ -194,11 +193,11 @@
            @if(isset($asopeningstock[$product->id][0]->asopeningstock)&&($asopeningstock[$product->id][0]->asopeningstock>0 || $asopeningstock[$product->id][0]->asopeningstock==0))
            @if($totalremaining[$product->id][0]->totalremainingqty== null || $totalremaining[$product->id][0]->totalremainingqty== "" )
                <?php 
-               $openingvalue=(($asopeningstock[$product->id][0]->asopeningstock/$product->unit->qty_count) + 0);
+               $openingvalue=(($asopeningstock[$product->id][0]->asopeningstock) + 0);
            ?>
           @else
           <?php 
-          $openingvalue=(($asopeningstock[$product->id][0]->asopeningstock/$product->unit->qty_count) + $totalremaining[$product->id][0]->totalremainingqty);
+          $openingvalue=(($asopeningstock[$product->id][0]->asopeningstock) + $totalremaining[$product->id][0]->totalremainingqty);
           ?>
          @endif
          <?php (double)$openingvalue;
@@ -208,11 +207,11 @@
       
                @if($totalremaining[$product->id][0]->totalremainingqty== null || $totalremaining[$product->id][0]->totalremainingqty== "" )
                    <?php 
-                   $openingvalue=(($foropening[$product->id][0]->removestock/$product->unit->qty_count) + 0);
+                   $openingvalue=(($foropening[$product->id][0]->removestock) + 0);
                    ?>
                @else
                    <?php 
-                   $openingvalue=(($foropening[$product->id][0]->removestock/$product->unit->qty_count) + $totalremaining[$product->id][0]->totalremainingqty);
+                   $openingvalue=(($foropening[$product->id][0]->removestock) + $totalremaining[$product->id][0]->totalremainingqty);
                    ?>
            @endif
            <?php

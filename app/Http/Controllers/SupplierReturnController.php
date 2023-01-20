@@ -5,7 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Models\Product;
 use App\Models\SupplierReturnDetail;
-use App\ProductLocation;
+use App\Models\SupplierReturn;
+use App\Models\ProductsUnit;
+use App\Helpers\FinanceHelper;
+use App\Models\Entry;
+use App\Models\Entryitem;
+use App\Models\PurchaseOrder;
+use App\Models\ProductLocation;
+use App\Models\PurchaseOrderDetail;
 use Excel;
 use Flash;
 use Illuminate\Http\Request;
@@ -21,7 +28,7 @@ class SupplierReturnController extends Controller
 {
     public function index()
     {
-        $purchasereturn = \App\Models\SupplierReturn::orderBy('id', 'desc')->paginate(20);
+        $purchasereturn = SupplierReturn::orderBy('id', 'desc')->paginate(20);
 
         $page_title = 'Admin | Supplier Return';
         $page_description = 'Manage Supplier Return';
@@ -36,7 +43,7 @@ class SupplierReturnController extends Controller
 
         $products = Product::select('id', 'name')->get();
         $users = \App\User::where('enabled', '1')->where('org_id', Auth::user()->org_id)->pluck('first_name', 'id');
-        $productlocation = \App\Models\ProductLocation::pluck('location_name', 'id')->all();
+        $productlocation = ProductLocation::pluck('location_name', 'id')->all();
         $clients = Client::select('id', 'name', 'location')->orderBy('id', 'DESC')->get();
 
         return view('admin.supplierreturn.create', compact('page_title', 'page_description', 'products', 'users', 'productlocation', 'clients'));
@@ -48,8 +55,8 @@ class SupplierReturnController extends Controller
 
         $page_description = 'Detail of Return';
 
-        $ord = \App\Models\SupplierReturn::find($id);
-        $orderDetails = \App\Models\SupplierReturnDetail::where('supplier_return_id', $ord->id)->get();
+        $ord = SupplierReturn::find($id);
+        $orderDetails = SupplierReturnDetail::where('supplier_return_id', $ord->id)->get();
 
         return view('admin.supplierreturn.show', compact('page_title', 'page_description', 'ord', 'orderDetails'));
     }
@@ -68,7 +75,7 @@ class SupplierReturnController extends Controller
 
         //dd($attributes);
 
-        $purchasereturn = \App\Models\SupplierReturn::create($attributes);
+        $purchasereturn = SupplierReturn::create($attributes);
 
         $product_id = $request->product_id;
         $units = $request->units;
@@ -152,12 +159,12 @@ class SupplierReturnController extends Controller
 
         $page_description = '';
 
-        $purchasereturn = \App\Models\SupplierReturn::find($id);
-        $purchase_return_detail = \App\Models\SupplierReturnDetail::where('supplier_return_id', $purchasereturn->id)->get();
+        $purchasereturn = SupplierReturn::find($id);
+        $purchase_return_detail = SupplierReturnDetail::where('supplier_return_id', $purchasereturn->id)->get();
 
         $products = Product::select('id', 'name')->get();
         $users = \App\User::where('enabled', '1')->where('org_id', Auth::user()->org_id)->pluck('first_name', 'id');
-        $productlocation = \App\Models\ProductLocation::pluck('location_name', 'id')->all();
+        $productlocation = ProductLocation::pluck('location_name', 'id')->all();
         $clients = Client::select('id', 'name', 'location')->orderBy('id', DESC)->get();
 
         return view('admin.supplierreturn.edit', compact('page_title', 'page_description', 'purchasereturn', 'purchase_return_detail', 'products', 'users', 'productlocation', 'clients'));
@@ -165,7 +172,7 @@ class SupplierReturnController extends Controller
 
     public function update(Request $request, $id)
     {
-        $purchasereturn = \App\Models\SupplierReturn::find($id);
+        $purchasereturn = SupplierReturn::find($id);
 
         $attributes = $request->all();
         $attributes['purchase_bill_id']=$request->purchase_bill_id;
@@ -179,7 +186,7 @@ class SupplierReturnController extends Controller
 
         $purchasereturn->update($attributes);
 
-        \App\Models\SupplierReturnDetail::where('supplier_return_id', $purchasereturn->id)->delete();
+        SupplierReturnDetail::where('supplier_return_id', $purchasereturn->id)->delete();
 
         $product_id = $request->product_id;
         $units = $request->units;
@@ -192,7 +199,7 @@ class SupplierReturnController extends Controller
 
         foreach ($product_id as $key => $value) {
             if ($value != '') {
-                $detail = new \App\Models\SupplierReturnDetail();
+                $detail = new SupplierReturnDetail();
                 $detail->supplier_return_id = $purchasereturn->id;
                 $detail->product_id = $product_id[$key];
                 $detail->units = $units[$key];
@@ -218,7 +225,7 @@ class SupplierReturnController extends Controller
 
         foreach ($custom_items_name as $key => $value) {
             if ($value != '') {
-                $detail = new \App\Models\SupplierReturnDetail();
+                $detail = new SupplierReturnDetail();
                 $detail->supplier_return_id = $purchasereturn->id;
                 $detail->description = $custom_items_name[$key];
                 $detail->units = $custom_units[$key];
@@ -242,8 +249,8 @@ class SupplierReturnController extends Controller
 
     public function pdf($id)
     {
-        $ord = \App\Models\SupplierReturn::find($id);
-        $orderDetails = \App\Models\SupplierReturnDetail::where('supplier_return_id', $ord->id)->get();
+        $ord = SupplierReturn::find($id);
+        $orderDetails = SupplierReturnDetail::where('supplier_return_id', $ord->id)->get();
         $imagepath = Auth::user()->organization->logo;
 
         $pdf = \PDF::loadView('admin.supplierreturn.pdf', compact('ord', 'imagepath', 'orderDetails'));
@@ -258,8 +265,8 @@ class SupplierReturnController extends Controller
 
     public function print($id)
     {
-        $ord = \App\Models\SupplierReturn::find($id);
-        $orderDetails = \App\Models\SupplierReturnDetail::where('supplier_return_id', $ord->id)->get();
+        $ord = SupplierReturn::find($id);
+        $orderDetails = SupplierReturnDetail::where('supplier_return_id', $ord->id)->get();
 
         $imagepath = Auth::user()->organization->logo;
 
@@ -270,20 +277,20 @@ class SupplierReturnController extends Controller
     {
 
         //dd($id);
-        $ord = \App\Models\SupplierReturn::find($id);
+        $ord = SupplierReturn::find($id);
 
         if (! $ord->isdeletable()) {
             abort(403);
         }
 
         if ($ord->entry_id && $ord->entry_id != '0') {
-            $entries = \App\Models\Entry::find($ord->entry_id);
-            \App\Models\Entryitem::where('entry_id', $entries->id)->delete();
-            \App\Models\Entry::find($ord->entry_id)->delete();
+            $entries = Entry::find($ord->entry_id);
+            Entryitem::where('entry_id', $entries->id)->delete();
+            Entry::find($ord->entry_id)->delete();
         }
 
-        \App\Models\SupplierReturn::find($id)->delete();
-        \App\Models\SupplierReturnDetail::where('supplier_return_id', $id)->delete();
+        SupplierReturn::find($id)->delete();
+        SupplierReturnDetail::where('supplier_return_id', $id)->delete();
 
         Flash::success('Supplier Return successfully deleted.');
 
@@ -296,7 +303,7 @@ class SupplierReturnController extends Controller
         //dd($id);
         $error = null;
 
-        $ord = \App\Models\SupplierReturn::find($id);
+        $ord = SupplierReturn::find($id);
 
         if (! $ord->isdeletable()) {
             abort(403);
@@ -304,7 +311,7 @@ class SupplierReturnController extends Controller
 
         $modal_title = 'Delete Supplier Return';
 
-        $return = \App\Models\SupplierReturn::find($id);
+        $return = SupplierReturn::find($id);
 
         $modal_route = route('admin.supplierreturn.delete', ['id' => $return->id]);
 
@@ -316,7 +323,7 @@ class SupplierReturnController extends Controller
     public function getPurchaseBillId()
     {
         $term = strtolower(\Request::get('term'));
-        $purchasebills = \App\Models\PurchaseOrder::where('purchase_type', 'bills')->select('id')->where('id', 'LIKE', '%'.$term.'%')->take(5)->get();
+        $purchasebills = PurchaseOrder::where('purchase_type', 'bills')->select('id')->where('id', 'LIKE', '%'.$term.'%')->take(5)->get();
         $return_array = [];
 
         foreach ($purchasebills as $v) {
@@ -328,21 +335,21 @@ class SupplierReturnController extends Controller
 
     public function getPurchaseBillInfo(Request $request)
     {
-        $purchasebillsinfo = \App\Models\PurchaseOrder::find($request->purchasebills_id);
+        $purchasebillsinfo = PurchaseOrder::find($request->purchasebills_id);
 
-        $customer_name = \App\Models\Client::find($purchasebillsinfo->supplier_id)->name;
+        $customer_name = Client::find($purchasebillsinfo->supplier_id)->name;
 
         // dd($customer_name);
-        $purchasedetailinfo = \App\Models\PurchaseOrderDetail::where('order_no', $purchasebillsinfo->id)->get();
+        $purchasedetailinfo = PurchaseOrderDetail::where('order_no', $purchasebillsinfo->id)->get();
 
         $products = Product::select('id', 'name')->get();
         $data = '';
 
         foreach ($purchasedetailinfo as $idi) {
-            $unit_name = \App\Models\ProductsUnit::find($idi->units)->name;
+            $unit_name = ProductsUnit::find($idi->units)->name;
 
             if ($idi->is_inventory == 1) {
-                $name = \App\Models\Product::find($idi->product_id)->name;
+                $name = Product::find($idi->product_id)->name;
 
                 $data .= '<tr>  
                                 <td>
@@ -427,10 +434,10 @@ class SupplierReturnController extends Controller
 
     private function updateEntries($orderId)
     {
-        $purchasereturn = \App\Models\SupplierReturn::find($orderId);
+        $purchasereturn = SupplierReturn::find($orderId);
 
         if ($purchasereturn->entry_id && $purchasereturn->entry_id != '0') { //update the ledgers
-            $attributes['entrytype_id'] = \FinanceHelper::get_entry_type_id('debitnote'); //Purchase Return
+            $attributes['entrytype_id'] = FinanceHelper::get_entry_type_id('debitnote'); //Purchase Return
             $attributes['tag_id'] = '9'; //Debit  Memos
             $attributes['user_id'] = Auth::user()->id;
             $attributes['org_id'] = Auth::user()->org_id;
@@ -439,34 +446,34 @@ class SupplierReturnController extends Controller
             $attributes['dr_total'] = $purchasereturn->total_amount;
             $attributes['cr_total'] = $purchasereturn->total_amount;
             $attributes['source'] = 'AUTO_SN';
-            $entry = \App\Models\Entry::find($purchasereturn->entry_id);
+            $entry = Entry::find($purchasereturn->entry_id);
             $entry->update($attributes);
 
             // Creddited to Customer or Interest or eq ledger
-            $sub_amount = \App\Models\Entryitem::where('entry_id', $purchasereturn->entry_id)->where('dc', 'D')->first();
+            $sub_amount = Entryitem::where('entry_id', $purchasereturn->entry_id)->where('dc', 'D')->first();
             $sub_amount->entry_id = $entry->id;
             $sub_amount->user_id = Auth::user()->id;
             $sub_amount->org_id = Auth::user()->org_id;
             $sub_amount->dc = 'D';
-            $sub_amount->ledger_id = \App\Models\Client::find($purchasereturn->supplier_id)->ledger_id; //Client ledger
+            $sub_amount->ledger_id = Client::find($purchasereturn->supplier_id)->ledger_id; //Client ledger
             $sub_amount->amount = $purchasereturn->total_amount;
             $sub_amount->narration = 'Supplier Return'; //$request->user_id
             //dd($sub_amount);
             $sub_amount->update();
 
             // Debitte to Bank or cash account that we are already in
-            $cash_amount = \App\Models\Entryitem::where('entry_id', $purchasereturn->entry_id)->where('dc', 'C')->first();
+            $cash_amount = Entryitem::where('entry_id', $purchasereturn->entry_id)->where('dc', 'C')->first();
             $cash_amount->entry_id = $entry->id;
             $cash_amount->user_id = Auth::user()->id;
             $cash_amount->org_id = Auth::user()->org_id;
             $cash_amount->dc = 'C';
-            $cash_amount->ledger_id = \FinanceHelper::get_ledger_id('PURCHASE_LEDGER_ID'); // Purchase ledger if selected or ledgers from .env
+            $cash_amount->ledger_id = FinanceHelper::get_ledger_id('PURCHASE_LEDGER_ID'); // Purchase ledger if selected or ledgers from .env
             // dd($cash_amount);
             $cash_amount->amount = $purchasereturn->total_amount;
             $cash_amount->narration = 'Supplier Return';
             $cash_amount->update();
         } else {                               //create the new entry items
-            $attributes['entrytype_id'] = \FinanceHelper::get_entry_type_id('debitnote'); //Credit Notes
+            $attributes['entrytype_id'] = FinanceHelper::get_entry_type_id('debitnote'); //Credit Notes
             $attributes['tag_id'] = '9'; //Credit Memos
             $attributes['user_id'] = Auth::user()->id;
             $attributes['org_id'] = Auth::user()->org_id;
@@ -475,15 +482,15 @@ class SupplierReturnController extends Controller
             $attributes['dr_total'] = $purchasereturn->total_amount;
             $attributes['cr_total'] = $purchasereturn->total_amount;
             $attributes['source'] = 'AUTO_SN';
-            $entry = \App\Models\Entry::create($attributes);
+            $entry = Entry::create($attributes);
 
             // Creddited to Customer or Interest or eq ledger
-            $sub_amount = new \App\Models\Entryitem();
+            $sub_amount = new Entryitem();
             $sub_amount->entry_id = $entry->id;
             $sub_amount->user_id = Auth::user()->id;
             $sub_amount->org_id = Auth::user()->org_id;
             $sub_amount->dc = 'D';
-            $sub_amount->ledger_id = \App\Models\Client::find($purchasereturn->supplier_id)->ledger_id; //Client ledger
+            $sub_amount->ledger_id = Client::find($purchasereturn->supplier_id)->ledger_id; //Client ledger
             $sub_amount->amount = $purchasereturn->total_amount;
             $sub_amount->narration = 'Supplier Return'; //$request->user_id
             //dd($sub_amount);
@@ -491,12 +498,12 @@ class SupplierReturnController extends Controller
 
             // Debitte to Bank or cash account that we are already in
 
-            $cash_amount = new \App\Models\Entryitem();
+            $cash_amount = new Entryitem();
             $cash_amount->entry_id = $entry->id;
             $cash_amount->user_id = Auth::user()->id;
             $cash_amount->org_id = Auth::user()->org_id;
             $cash_amount->dc = 'C';
-            $cash_amount->ledger_id = \FinanceHelper::get_ledger_id('PURCHASE_LEDGER_ID'); // Sales ledger if selected or ledgers from .env
+            $cash_amount->ledger_id = FinanceHelper::get_ledger_id('PURCHASE_LEDGER_ID'); // Sales ledger if selected or ledgers from .env
             // dd($cash_amount);
             $cash_amount->amount = $purchasereturn->total_amount;
             $cash_amount->narration = 'Supplier Return';

@@ -1661,7 +1661,10 @@ public function stocksOverview()
         foreach($dataarray as $category_id=>$products){
             $category_name=ProductCategory::find($category_id)->name;
             foreach($products as $product){
-                $opening_detail=StockAdjustmentDetail::select(DB::raw("SUM(qty) as quantity,SUM(total) as total, AVG(price) as rate"))
+                $opening_detail=StockAdjustmentDetail::select(DB::raw("SUM(CASE WHEN unit = 15 THEN qty / 12
+                WHEN unit = 20 THEN qty / 24 
+                ELSE qty
+            END) as quantity,SUM(total) as total, AVG(price) as rate"))
                 ->where('product_id',$product->id)
                 ->whereIn('adjustment_id',StockAdjustment::where('reason',5)->where('store_id',$current_store)
                     ->when($startdate && $enddate, function ($q) use($startdate,$enddate) {
@@ -1670,8 +1673,8 @@ public function stocksOverview()
                ->first();
                 $records[$category_name][$product->name]['opening']=$opening_detail;
                 $purchase_receipt=PurchaseOrderDetail::
-                select(DB::raw("SUM(CASE WHEN units = 17 THEN quantity_recieved * 12
-                                WHEN units = 19 THEN quantity_recieved * 24 
+                select(DB::raw("SUM(CASE WHEN units = 15 THEN quantity_recieved/12
+                                WHEN units = 20 THEN quantity_recieved/24 
                                 ELSE quantity_recieved
                             END) as quantity, SUM(total) as total,AVG(unit_price) as rate"))
                 ->where('product_id',$product->id)
@@ -1682,8 +1685,8 @@ public function stocksOverview()
                ->first();
                 $records[$category_name][$product->name]['receipt']=$purchase_receipt;
 
-                $receipt_return=SupplierReturnDetail::select(DB::raw("SUM(CASE WHEN units = 17 THEN return_quantity * 12
-                WHEN units = 19 THEN return_quantity * 24 
+                $receipt_return=SupplierReturnDetail::select(DB::raw("SUM(CASE WHEN units = 15 THEN return_quantity/12
+                WHEN units = 20 THEN return_quantity / 24 
                 ELSE return_quantity
             END) as quantity, SUM(return_total) as total,AVG(return_price) as rate"))
                 ->where('product_id',$product->id)
@@ -1694,8 +1697,8 @@ public function stocksOverview()
            ->first();
                 $records[$category_name][$product->name]['receipt_return']=$receipt_return;
                
-                $issue=InvoiceDetail::select(DB::raw("SUM(CASE WHEN unit = 17 THEN quantity * 12
-                WHEN unit = 19 THEN quantity * 24 
+                $issue=InvoiceDetail::select(DB::raw("SUM(CASE WHEN unit = 15 THEN quantity / 12
+                WHEN unit = 20 THEN quantity / 24 
                 ELSE quantity
             END) as quantity,SUM(total) as total,unit, AVG(price) as rate"))
                 ->where('product_id',$product->id)
@@ -1717,8 +1720,8 @@ public function stocksOverview()
                 ->where('invoice_meta.is_bill_active', 0)
                 ->pluck('invoice.id');
 
-                $issue_return=InvoiceDetail::select(DB::raw("SUM(CASE WHEN unit = 17 THEN quantity * 12
-                WHEN unit = 19 THEN quantity * 24 
+                $issue_return=InvoiceDetail::select(DB::raw("SUM(CASE WHEN unit = 15 THEN quantity / 12
+                WHEN unit = 20 THEN quantity / 24 
                 ELSE quantity
             END) as quantity,SUM(total) as total,unit, AVG(price) as rate"))
                 ->where('product_id',$product->id)
@@ -1726,8 +1729,8 @@ public function stocksOverview()
                ->first();
                 $records[$category_name][$product->name]['issue_return']=$issue_return;
 
-                $adjustment=StockAdjustmentDetail::select(DB::raw("SUM(CASE WHEN unit = 17 THEN qty * 12
-                WHEN unit = 19 THEN qty * 24 
+                $adjustment=StockAdjustmentDetail::select(DB::raw("SUM(CASE WHEN unit = 15 THEN qty / 12
+                WHEN unit = 20 THEN qty / 24 
                 ELSE qty
             END) as quantity,SUM(total) as total, AVG(price) as rate"))
                 ->where('product_id',$product->id)

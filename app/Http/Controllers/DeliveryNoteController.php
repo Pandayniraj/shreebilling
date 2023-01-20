@@ -153,7 +153,7 @@ class DeliveryNoteController extends Controller
         foreach ($product_id as $key => $value) {
             if ($value != '') {
                 $detail = new \App\Models\DeliveryNoteDetails();
-                $detail->deliverynote_id = $delivery_note->id;
+                $detail->deliverynote_id = $delivery->id;
                 $detail->product_id = $product_id[$key];
                 $detail->unit = $units[$key];
                 $detail->sales_quantity = $sales_quantity[$key];
@@ -340,25 +340,43 @@ class DeliveryNoteController extends Controller
         $page_description="Detail-daily report of all product";
        
         $products= \App\Models\Product::with('unit')->where('product_division', 'raw_material')->select('name', 'id','product_unit')->get();
-       $perdaypurchasedetail=\App\Models\StockMove::select(\DB::raw("SUM(qty) as totalpurchaseqty, stock_id"))
+       $perdaypurchasedetail=\App\Models\StockMove::select(\DB::raw("SUM(CASE WHEN unit_id = 15 THEN qty / 12
+       WHEN unit_id = 20 THEN qty / 24 
+       ELSE qty
+   END) as totalpurchaseqty, stock_id"))
        ->whereDate('tran_date', \carbon\Carbon::now())->where('trans_type', 102)->groupby('stock_id')->get()->groupby('stock_id');
        
-       $perdayproducttotal= \App\Models\InvoiceDetail::select(\DB::raw("SUM(quantity) as totalproductqty, product_id"))
+       $perdayproducttotal= \App\Models\InvoiceDetail::select(\DB::raw("SUM(CASE WHEN unit = 15 THEN quantity / 12
+       WHEN unit = 20 THEN quantity / 24 
+       ELSE quantity
+   END) as totalproductqty, product_id"))
        ->whereDate('date', \carbon\Carbon::now())->groupby('product_id')->get()->groupby('product_id');
 
-        $perdaysalesdetails=\App\Models\InvoiceDetail::select(\DB::raw("SUM(quantity) as totalsalesqty, client_id, product_id"))
+        $perdaysalesdetails=\App\Models\InvoiceDetail::select(\DB::raw("SUM(CASE WHEN unit = 15 THEN quantity / 12
+        WHEN unit = 20 THEN quantity / 24 
+        ELSE quantity
+    END) as totalsalesqty, client_id, product_id"))
         ->whereDate('date', \carbon\Carbon::now())
         ->groupBy(['client_id','product_id'])->get();
         $perdaysalesdetails=$perdaysalesdetails->groupBy('client_id');
 
-        $asopeningstock= \App\Models\StockMove::select(\DB::raw("SUM(qty) as asopeningstock, stock_id"))
+        $asopeningstock= \App\Models\StockMove::select(\DB::raw("SUM(CASE WHEN unit_id = 15 THEN qty / 12
+        WHEN unit_id = 20 THEN qty / 24 
+        ELSE qty
+    END) as asopeningstock, stock_id"))
         ->where('trans_type', 401)->where(function($query){
            return $query->whereDate('tran_date', \carbon\Carbon::now());
         }) 
         ->groupby('stock_id')->get()->groupby('stock_id');
-        $foropening = \App\Models\StockMove::select(\DB::raw("SUM(qty) as removestock, stock_id"))->whereDate('tran_date','<=', \carbon\Carbon::yesterday())->whereIn('trans_type', [401,402])->groupby('stock_id')->get()->groupby('stock_id');
+        $foropening = \App\Models\StockMove::select(\DB::raw("SUM(CASE WHEN unit_id = 15 THEN qty / 12
+        WHEN unit_id = 20 THEN qty / 24 
+        ELSE qty
+    END) as removestock, stock_id"))->whereDate('tran_date','<=', \carbon\Carbon::yesterday())->whereIn('trans_type', [401,402])->groupby('stock_id')->get()->groupby('stock_id');
         
-        $totalremaining=\App\Models\StockMove::select(\DB::raw("SUM(qty) as totalremainingqty, stock_id"))->whereDate('tran_date','<=', \carbon\Carbon::yesterday())->whereIn('trans_type', [102, 203])->groupby('stock_id')->get()->groupby('stock_id');
+        $totalremaining=\App\Models\StockMove::select(\DB::raw("SUM(CASE WHEN unit_id = 15 THEN qty / 12
+        WHEN unit_id = 20 THEN qty / 24 
+        ELSE qty
+    END) as totalremainingqty, stock_id"))->whereDate('tran_date','<=', \carbon\Carbon::yesterday())->whereIn('trans_type', [102, 203])->groupby('stock_id')->get()->groupby('stock_id');
        
         return view('deliverynote.dispatchreport',compact('page_title','totalremaining','asopeningstock', 'foropening', 'perdayproducttotal', 'page_description','perdaypurchasedetail','products','perdaysalesdetails'));
     }
@@ -368,25 +386,43 @@ class DeliveryNoteController extends Controller
         $page_description="Detail-daily report of all product";
        
         $products= \App\Models\Product::with('unit')->where('product_division', 'raw_material')->select('name', 'id','product_unit')->get();
-       $perdaypurchasedetail=\App\Models\StockMove::select(\DB::raw("SUM(qty) as totalpurchaseqty, stock_id"))
+       $perdaypurchasedetail=\App\Models\StockMove::select(\DB::raw("SUM(CASE WHEN unit_id = 15 THEN qty / 12
+       WHEN unit_id = 20 THEN qty / 24 
+       ELSE qty
+   END) as totalpurchaseqty, stock_id"))
        ->whereDate('tran_date', \carbon\Carbon::now())->where('trans_type', 102)->groupby('stock_id')->get()->groupby('stock_id');
        
-       $perdayproducttotal= \App\Models\InvoiceDetail::select(\DB::raw("SUM(quantity) as totalproductqty, product_id"))
+       $perdayproducttotal= \App\Models\InvoiceDetail::select(\DB::raw("SUM(CASE WHEN unit = 15 THEN quantity / 12
+       WHEN unit = 20 THEN quantity / 24 
+       ELSE quantity
+   END) as totalproductqty, product_id"))
        ->whereDate('date', \carbon\Carbon::now())->groupby('product_id')->get()->groupby('product_id');
 
-       $perdaysalesdetails=\App\Models\InvoiceDetail::select(\DB::raw("SUM(quantity) as totalsalesqty, client_id, product_id"))
+       $perdaysalesdetails=\App\Models\InvoiceDetail::select(\DB::raw("SUM(CASE WHEN unit = 15 THEN quantity / 12
+       WHEN unit = 20 THEN quantity / 24 
+       ELSE quantity
+   END) as totalsalesqty, client_id, product_id"))
        ->whereDate('date', \carbon\Carbon::now())
        ->groupBy(['client_id','product_id'])->get();
        $perdaysalesdetails=$perdaysalesdetails->groupBy('client_id');
 
-        $asopeningstock= \App\Models\StockMove::select(\DB::raw("SUM(qty) as asopeningstock, stock_id"))
+        $asopeningstock= \App\Models\StockMove::select(\DB::raw("SUM(CASE WHEN unit_id = 15 THEN qty / 12
+        WHEN unit_id = 20 THEN qty / 24 
+        ELSE qty
+    END) as asopeningstock, stock_id"))
         ->where('trans_type', 401)->where(function($query){
            return $query->whereDate('tran_date', \carbon\Carbon::now());
         }) 
         ->groupby('stock_id')->get()->groupby('stock_id');
-        $foropening = \App\Models\StockMove::select(\DB::raw("SUM(qty) as removestock, stock_id"))->whereDate('tran_date','<=', \carbon\Carbon::yesterday())->whereIn('trans_type', [401,402])->groupby('stock_id')->get()->groupby('stock_id');
+        $foropening = \App\Models\StockMove::select(\DB::raw("SUM(CASE WHEN unit_id = 15 THEN qty / 12
+        WHEN unit_id = 20 THEN qty / 24 
+        ELSE qty
+    END) as removestock, stock_id"))->whereDate('tran_date','<=', \carbon\Carbon::yesterday())->whereIn('trans_type', [401,402])->groupby('stock_id')->get()->groupby('stock_id');
         
-        $totalremaining=\App\Models\StockMove::select(\DB::raw("SUM(qty) as totalremainingqty, stock_id"))->whereDate('tran_date','<=', \carbon\Carbon::yesterday())->whereIn('trans_type', [102, 203])->groupby('stock_id')->get()->groupby('stock_id');
+        $totalremaining=\App\Models\StockMove::select(\DB::raw("SUM(CASE WHEN unit_id = 15 THEN qty / 12
+        WHEN unit_id = 20 THEN qty / 24 
+        ELSE qty
+    END) as totalremainingqty, stock_id"))->whereDate('tran_date','<=', \carbon\Carbon::yesterday())->whereIn('trans_type', [102, 203])->groupby('stock_id')->get()->groupby('stock_id');
         // dd($foropening, $totalremaining);
         return \Excel::download(new \App\Exports\DispatchSheetExport($products,$perdaypurchasedetail,$perdayproducttotal,$perdaysalesdetails,$asopeningstock,$foropening,$totalremaining,'Dispatch Sheet'), "DispatchSheet.xls");
     }
