@@ -115,7 +115,7 @@
             $total_closing_total=0;
         @endphp
         @foreach ($records as $category=>$product)
-        @dd($records);
+        
             <tr>
                 <td colspan="22" style="text-align: left; font-weight: bold;  color: black; border: 1px solid black; background-color: #FFFF00;">
                 {{$category}}
@@ -165,7 +165,8 @@
                     colspan="2">{{$name}}</td>
                     @foreach ($title as $key=>$value)
                         <td style="text-align: center; font-weight: bold;  color: black; border: 1px solid black; " >
-                            {{$value->quantity}}</td>
+                                {{ $value->quantity }}
+                        </td>
                         @if($key!='issue_return' && $key!='adjustment' && $key!='receipt_return')
                             <td style="text-align: center; font-weight: bold;  color: black; border: 1px solid black; " >
                                 {{$value->rate}}</td>

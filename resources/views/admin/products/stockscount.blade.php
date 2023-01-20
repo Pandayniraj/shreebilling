@@ -140,7 +140,6 @@
 				@foreach($transations as $key=> $transation)
 				<?php
 					$sum = 0;
-	
 				?>
 					@foreach($transation as $k=> $result)
 					

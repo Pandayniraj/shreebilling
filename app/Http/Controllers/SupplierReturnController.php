@@ -85,6 +85,7 @@ class SupplierReturnController extends Controller
                 $detail->supplier_return_id = $purchasereturn->id;
                 $detail->product_id = $product_id[$key];
                 $detail->units = $units[$key];
+                
                 $detail->purchase_quantity = $purchase_quantity[$key];
                 $detail->return_quantity = $return_quantity[$key];
                 $detail->purchase_price = $purchase_price[$key];
@@ -93,6 +94,22 @@ class SupplierReturnController extends Controller
                 $detail->reason = $reason[$key];
                 $detail->is_inventory = 1;
                 $detail->save();
+
+                // $stockMove = new \App\Models\StockMove();
+
+                // $stockMove->stock_id = $product_id[$key];
+                // $stockMove->unit_id = $units[$key];
+                // $stockMove->tran_date = $request->bill_date;
+                // $stockMove->user_id = \Auth::user()->id;
+                // $stockMove->reference = 'store_out_'.$purchasereturn->id;
+                // $stockMove->transaction_reference_id = $purchasereturn->id;
+                // $stockMove->qty = '-'.$return_quantity[$key];
+                // $stockMove->price = $return_price[$key];
+                // // $stockMove->trans_type = "SUPPLIERRETURN";
+                // $stockMove->order_no = $purchasereturn->id;
+                // $stockMove->store_id = $request->into_stock_location;
+                // $stockMove->order_reference = $request->purchase_bill_no;
+                // $stockMove->save();
             }
         }
 
@@ -350,7 +367,7 @@ class SupplierReturnController extends Controller
                                    <input type="number" class="form-control purchase_price" name="purchase_price[]" placeholder="Purchase Price" min="1" value="'.$idi->unit_price.'" required="required" readonly>
                                 </td>
                                 <td>
-                                    <input type="number" class="form-control price" name="return_price[]" placeholder="Credit Price" min="1" value="'.$idi->unit_price.'" required="required" >
+                                    <input type="number" class="form-control price" name="return_price[]" placeholder="Credit Price" min="1" value="'.$idi->unit_price.'" step="0.01" required="required" >
                                 </td>
 
                                  <td>
@@ -388,7 +405,7 @@ class SupplierReturnController extends Controller
                                 </td>
 
                                 <td>
-                                    <input type="number" class="form-control price" name="custom_return_price[]" placeholder="Credit Price" min="1" value="'.$idi->unit_price.'" required="required" >
+                                    <input type="number" class="form-control price" name="custom_return_price[]" placeholder="Credit Price" min="1" value="'.$idi->unit_price.'" step="0.01" required="required">
                                 </td>
                                 <td>
                                  <input type="number" class="form-control total" name="custom_return_total[]" placeholder="Total" value="'.$idi->total.'" readonly="readonly" >
