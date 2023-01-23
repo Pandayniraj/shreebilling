@@ -102,7 +102,6 @@ class InvoiceController extends Controller
 
                         return $query->where('outlet_id',$outlet_id);
                     }
-
                 })
                 ->where('org_id', \Auth::user()->org_id)
                 ->orderBy('id', 'desc')

@@ -1341,20 +1341,22 @@ class PurchaseController extends Controller
         $page_title = 'Admin | purchasebook';
         $op = \Request::get('op');
         $fiscal_year = (\App\Models\Fiscalyear::where('current_year', '1')->first())->fiscal_year;
-        if ($request->filter == 'nep') {                 //for nepali
+        if ($request->filter == 'nep') {
+                             //for nepali
             $startdate = $request->nepstartdate;
             $enddate = $request->nependdate;
             $cal = new \App\Helpers\NepaliCalendar();
-            $startdate = $cal->nep_to_eng_digit_conversion($startdate);
+            $startdate = explode('-', $startdate);
             $date = $cal->nep_to_eng($startdate[0], $startdate[1], $startdate[2]);
             $startdate = $date['year'] . '-' . $date['month'] . '-' . $date['date'];
-            $enddate = $cal->nep_to_eng_digit_conversion($enddate);
+            $enddate = explode('-', $enddate);
             $date = $cal->nep_to_eng($enddate[0], $enddate[1], $enddate[2]);
             $enddate = $date['year'] . '-' . $date['month'] . '-' . $date['date'];
         } else {
             $startdate = $request->engstartdate;
             $enddate = $request->engenddate;
         }
+        
         $purchase_book = \App\Models\PurchaseOrder::whereIn('purchase_type', ['bills','assets', 'services'])
             ->when($startdate&&$enddate,function ($q) use ($enddate,$startdate) {
                 $q->where('bill_date', '>=', $startdate)
@@ -1402,14 +1404,12 @@ class PurchaseController extends Controller
             if ($op == 'excel') {
                  $data = DB::select("select purch_orders.bill_date as billdate , purch_orders.bill_no as 'Bill Num', clients.name as 'Supplier’s Name',clients.vat as 'Supl. PAN Number',purch_orders.total as 'Total Purchase',purch_orders.non_taxable_amount as 'Non Tax Purchase',purch_orders.discount_amount as Discount ,purch_orders.taxable_amount as Amount,purch_orders.tax_amount as 'Tax(Rs)' from purch_orders LEFT JOIN clients ON clients.id = purch_orders.supplier_id where purch_orders.purchase_type ='bills' ");
                 $data = json_decode(json_encode($data), true);
-
                 // return \Excel::download(new \App\Exports\PurchaseExport($data,'Purchase Book List View'), 'purchase.csv');
                 return \Excel::download(new \App\Exports\PurchaseExport($data,'Purchase Book List View'), "purchase.xls");
                 // return \Excel::download(new \App\Exports\PurchaseExport($data), 'purchase.csv');
             }
-            $purchase_book = $purchase_book->paginate(50);
         }
-
+        $purchase_book = $purchase_book->paginate(50);
         return view('admin.purchase-book.index', compact('purchase_book', 'page_title', 'fiscal_year'));
     }
 

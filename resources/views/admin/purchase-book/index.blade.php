@@ -48,16 +48,17 @@
         </section>
 
 
-<form method="GET" action="/admin/purchase-book/">
 
-       <div class='row'>
-        <div class='col-md-12'>
 
-              <div class="box box-primary">
+      <div class='row'>
+      <div class='col-md-12'>
+
+      <div class="box box-primary">
     <div class="box-header with-border">
 
 
         <div class="col-md-5 pull-left">
+          <form method="GET" action="/admin/purchase-book/">
            <div class="col-md-4">
            <div class="input-group">
                   <div class="input-group-addon">
@@ -78,6 +79,7 @@
 
 
             <button type="submit" class="btn btn-primary btn-sm" name="filter" value="eng">Show Bills</button>
+          </form>
             </div>
         <div class="col-md-2">
             <label>
@@ -94,7 +96,8 @@
                   <div class="input-group-addon">
                     <i class="fa fa-calendar"></i>
                   </div>
-                  <input type="text" placeholder="सुरु  मिति " class="form-control input-sm" id='nep-startdate' name="nepstartdate" value="{{\Request::get('nepstartdate')}}">
+                  {{-- <input type="text" name="nepdate" class="form-control"> --}}
+                  <input type="text" placeholder="सुरु  मिति " class="form-control input-sm " id="nep-startdate" name="nepstartdate" value="">
                 </div>
             </div>
 
@@ -103,17 +106,17 @@
                   <div class="input-group-addon">
                     <i class="fa fa-calendar"></i>
                   </div>
-                  <input type="text" placeholder="अन्तिम मिति" class="form-control input-sm" id='nep-enddate' name="nependdate" value="{{\Request::get('nependdate')}}">
+                  <input type="text" placeholder="अन्तिम मिति" class="form-control input-sm" id="nep-enddate" name="nependdate" value="">
                 </div>
             </div>
 
 
-            <button type="submit" class="btn btn-success btn-sm" value="nep" name="filter">नतिजा </button>
+            <button type="submit" id="btn-submit-filter-nep" class="btn btn-success btn-sm" value="nep" name="filter" style="white-space: nowrap;">नतिजा </button>
+
             <a href="/admin/purchase-book/" class="btn btn-success btn-sm" id ="btn-filter-clear">Reset</a>
             </div>
 
 </div>
-   </form>
 <table class="table table-hover table-bordered table-stripped" id="leads-table" cellspacing="0" width="100%">
 <thead>
     <tr>
@@ -210,8 +213,9 @@
 @endsection
 
 @section('body_bottom')
- <script type="text/javascript" src="https://nepali-date-picker.herokuapp.com/src/jquery.nepaliDatePicker.js"> </script>
-<link rel="stylesheet" href="https://nepali-date-picker.herokuapp.com/src/nepaliDatePicker.css">
+<link rel="stylesheet" type="text/css" href="/nepali-date-picker/nepali-date-picker.min.css">
+<script src="/nepali-date-picker/nepali-date-picker.js"></script>
+
     <!-- form submit -->
     @include('partials._body_bottom_submit_bug_edit_form_js')
     <script type="text/javascript">
@@ -233,15 +237,23 @@
           allowInputToggle: true,
 
         });
-
       });
+      $(function() {
 $("#nep-startdate").nepaliDatePicker({
     dateFormat: "%y-%m-%d",
     closeOnDateSelect: true
-});
+})
+      });
+      $(function() {
 $("#nep-enddate").nepaliDatePicker({
     dateFormat:"%y-%m-%d",
     closeOnDateSelect: true
+})});
+$("#btn-submit-filter-nep").on("click", function() {
+nepstartdate = $("#nep-startdate").val();
+nependdate = $("#nep-enddate").val();
+filter = $("#btn-submit-filter-nep").val();
+window.location.href = "{!! url('/') !!}/admin/purchase-book?nepstartdate=" + nepstartdate + "&nependdate=" + nependdate + "&filter=" + filter;
 });
 $("#btn-filter-clear").on("click", function () {
   window.location.href = "{!! url('/') !!}/admin/purchase-book/";

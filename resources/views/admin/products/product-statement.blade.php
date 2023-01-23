@@ -27,7 +27,6 @@
                     @foreach($transations as $result)
                         <?php 
                            $reasons = \App\Models\AdjustmentReason::all();
-
                            $type = '';
                            $href = null;
                            $order = null;

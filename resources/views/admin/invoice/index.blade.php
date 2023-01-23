@@ -47,14 +47,9 @@
 
                          {!! Form::text('bill_no', \Request::get('bill_no'), ['style' => 'width:120px; display:inline-block;', 'class' => 'form-control input-sm', 'id'=>'bill_no', 'placeholder'=>'Enter bill number...','autocomplete' =>'off']) !!}&nbsp;&nbsp;
 
-
-                        {!! Form::select('client_id', $outlets, \Request::get('client_id'), ['id'=>'filter-customer', 'class'=>'form-control searchable','placeholder' => 'Select Customer', 'style'=>'width:150px; display:inline-block;']) !!}&nbsp;&nbsp;
-
+                        {!! Form::select('client_id',$clients, \Request::get('client_id'), ['id'=>'filter-customer', 'class'=>'form-control searchable','placeholder' => 'Select Customer', 'style'=>'width:150px; display:inline-block;']) !!}&nbsp;&nbsp;
 
                          {!! Form::select('fiscal_year',  $fiscal_years, \Request::get('fiscal_year'), ['id'=>'fiscal_year', 'class'=>'form-control', 'placeholder' => 'Select Fiscal Year','style'=>'width:150px; display:inline-block;']) !!}&nbsp;&nbsp;
-
-
-
 
                         <input type="hidden" name="search" value="true">
                         <input type="hidden" name="type" value={{ Request::get('type') }}>

@@ -36,6 +36,12 @@
             <td style="border: 1px solid; text-align:center;">{{$item['outlet']['name']}}</td>
             <td style="border: 1px solid; text-align:center;">{{ \Auth::user()->organization->vat_id }}</td>
             <td style="border: 1px solid; text-align:center;">{{$item['client']['vat']??'-' }}</td>
+            <td style="border: 1px solid; text-align:center;">-</td>
+            <td style="border: 1px solid; text-align:center;">-</td>
+            <td style="border: 1px solid; text-align:center;">-</td>
+            <td style="border: 1px solid; text-align:center;">-</td>
+            <td style="border: 1px solid; text-align:center;">-</td>
+            <td style="border: 1px solid; text-align:center;">{{ $item['total_amount'] }}</td>
         </tr>    
             @for($i=0;$i<sizeof($item['invoice_detail']);$i++)
         <tr>
@@ -49,7 +55,7 @@
             <td style="border: 1px solid; text-align:center;">{{ $item['invoice_detail'][$i]['quantity'] }}</td>
             <td style="border: 1px solid; text-align:center;">{{$item['invoice_detail'][$i]['price']}}</td>
             <td style="border: 1px solid; text-align:center;">{{ $item['invoice_detail'][$i]['units']['name'] }}</td>
-            <td style="border: 1px solid; text-align:center; font-size:12px;  background-color:#999898;">-</td>
+            <td style="border: 1px solid; text-align:center; font-size:12px;">{{ $item['invoice_detail'][$i]['tax_amount'] }}</td>
             <td style="border: 1px solid; text-align:center;">{{$item['invoice_detail'][$i]['total']}}</td>
             @php
             $totalsalesquantity +=$item['invoice_detail'][$i]['quantity'];

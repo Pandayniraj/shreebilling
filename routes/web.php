@@ -1227,6 +1227,8 @@ Route::group(['middleware' =>  ['iptracker' , 'authorize']], function () {
         Route::get('/purchase/confirm-post-to-po/{id}', ['as' => 'admin.confirm-post-to-po', 'uses' => 'PurchaseController@ConfirmPostToPO']);
 
         Route::get('/purchase-book', ['as' => 'admin.purchase-book', 'uses' => 'PurchaseController@PurchaseBook']);
+        Route::get('/purchase-book-nep', ['as' => 'admin.purchase-book-nep', 'uses' => 'PurchaseController@PurchaseBook']);
+
         Route::get('/purchase-book-bymonth/{month}', ['as' => 'admin.purchase-book-bymonth', 'uses' => 'PurchaseController@PurchaseBookByMonths']);
 
         Route::get('purchase/duepayment', ['as' => 'purchase.sendmail', 'uses' => 'PurchaseController@duePayment']);

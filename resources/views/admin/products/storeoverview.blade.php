@@ -33,9 +33,9 @@ else{
                 Current Fiscal Year: {{\App\Models\Fiscalyear::where('current_year',1)->first()->fiscal_year}}
                 <div class="col-md-12" style="margin-top:5px;">
                     <div class="filter form-inline" style="margin:0 30px 0 0;">
-                        {!! Form::text('start_date', \Request::get('start_date'), ['style' => 'width:120px;', 'class' => 'form-control input-sm date-picker', 'id'=>'start_date', 'placeholder'=>'Start Date']) !!}&nbsp;&nbsp;
+                        {!! Form::text('start_date', \Request::get('start_date'), ['style' => 'width:120px;', 'class' => 'form-control input-sm', 'id'=>'start_date', 'placeholder'=>'Start Date']) !!}&nbsp;&nbsp;
 
-                        {!! Form::text('end_date', \Request::get('end_date'), ['style' => 'width:120px; display:inline-block;', 'class' => 'form-control input-sm date-picker', 'id'=>'end_date', 'placeholder'=>'End Date']) !!}&nbsp;&nbsp;
+                        {!! Form::text('end_date', \Request::get('end_date'), ['style' => 'width:120px; display:inline-block;', 'class' => 'form-control input-sm', 'id'=>'end_date', 'placeholder'=>'End Date']) !!}&nbsp;&nbsp;
 
                         {!! Form::select('fiscal_year',$allFiscalYear,$fiscal_year,['id'=>'fiscal_year_id', 'class'=>'form-control searchable input-sm', 'style'=>'width:150px; display:inline-block;'])  !!}
 

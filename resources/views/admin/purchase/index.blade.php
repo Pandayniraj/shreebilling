@@ -137,7 +137,7 @@ input[type="search"] {
                     </a>
                     <a class="btn btn-default btn-sm btn-height" href="/admin/purchase/overallexcel" title="Purchase Detail Excel">
                         <i class="fa fa-table"></i>Purchase-Detail Excel</a>
-                    <a  href="/admin/entries/sampleexcel"><button class="btn btn-sm">Download Sample</a>
+                    {{-- <a  href="/admin/entries/sampleexcel"><button class="btn btn-sm">Download Sample</a> --}}
                     &nbsp;
                 </div>
                 <div class="row" style="margin-left:-5px; margin-top: 5px;">

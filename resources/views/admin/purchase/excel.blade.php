@@ -21,14 +21,12 @@
     <tbody>
         @php
             $totalpurchasequantity=0;
+            $totaltax=0;
             $totalrate=0;
             $totalamount=0;
             $totaladditionalamount=0;
         @endphp
-    @foreach($data as $item)
-    {{-- @dd($item['client']['name'], $item); --}}
-   
-     
+    @foreach($data as $item)     
         <tr>
             <td style="border: 1px solid; text-align:center;">{{$item['client']['name']??'-'}}</td>
             <td style="border: 1px solid; text-align:center;" >{{\App\Helpers\TaskHelper::getNepaliDate($item['bill_date'])}}</td>
@@ -45,11 +43,13 @@
             <td style="border: 1px solid; text-align:center;">{{ $item['product_details'][$i]['qty_invoiced'] }}</td>
             <td style="border: 1px solid; text-align:center;">{{$item['product_details'][$i]['unit_price']}}</td>
             <td style="border: 1px solid; text-align:center;">{{ $item['product_details'][$i]['units']['name'] }}</td>
-            <td style="border: 1px solid; text-align:center; font-size:12px;  background-color:#999898;">-</td>
+            <td style="border: 1px solid; text-align:center; font-size:12px;">{{ $item['product_details'][$i]['tax_amount'] }}
+            </td>
             <td style="border: 1px solid; text-align:center;">{{$item['product_details'][$i]['total'] }}</td>
 
             <td style="border: 1px solid; text-align:center;">{{$item['product_details'][$i]['unitpricewithimport']-$item['product_details'][$i]['total'] }}</td>
             @php
+            $totaltax+=$item['product_details'][$i]['tax_amount'];
             $totalpurchasequantity +=$item['product_details'][$i]['qty_invoiced'];
             $totalamount+=$item['product_details'][$i]['total'];
             $totaladditionalamount+=$item['product_details'][$i]['unitpricewithimport']-$item['product_details'][$i]['total'];
@@ -62,7 +62,7 @@
             <td style="border: 1px solid; text-align:center; font-size:12px;  background-color:#999898;">{{$totalpurchasequantity}}</td>
             <td style="border: 1px solid; text-align:center; font-size:12px;  background-color:#999898;">-</td>
             <td style="border: 1px solid; text-align:center; font-size:12px;  background-color:#999898;">-</td>
-            <td style="border: 1px solid; text-align:center; font-size:12px;  background-color:#999898;">-</td>
+            <td style="border: 1px solid; text-align:center; font-size:12px;  background-color:#999898;">{{ $totaltax }}</td>
             <td style="border: 1px solid; text-align:center; font-size:12px;  background-color:#999898;">{{$totalamount}}</td>
             <td style="border: 1px solid; text-align:center; font-size:12px;  background-color:#999898;">{{$totaladditionalamount}}</td>
         </tr>
