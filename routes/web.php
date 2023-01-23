@@ -2383,7 +2383,7 @@ Route::get('chartofaccounts/groupdetail/pdf/{id}', ['as' => 'admin.chartofaccoun
 
         Route::post('product/stocks_by_location', ['as' => 'admin.products.stocks_by_location.post', 'uses' => 'ProductController@stocks_by_location_post']);
 
-        Route::get('product/stock_adjustment', ['as' => 'admin.products.stock_adjustment', 'uses' => 'ProductController@stock_adjustment']);
+     
         Route::post('product/stock_adjustment', ['as' => 'admin.products.stock_adjustment.store', 'uses' => 'ProductController@stock_adjustment_store']);
 
         Route::get('product/stock_adjustment/create', ['as' => 'admin.products.stock_adjustment.create', 'uses' => 'ProductController@stock_adjustment_create']);

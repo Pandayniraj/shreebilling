@@ -109,8 +109,10 @@
                         -
                         @endif
                       </td>
-                     
-                      <td align="center">{{$sumbottlewise += $result->qty * $result->unit->qty_count}}</td>
+                      <?php
+                      $sumbottlewise+=$result->qty * $result->unit->qty_count;
+                      ?>
+                      <td align="center">{{$sumbottlewise}}</td>
                       <?php
 								      $unitid= \App\Models\Product::where('id', $result->stock_id)->first()->product_unit;
 								      $unitqty= \App\Models\ProductsUnit::where('id', $unitid)->first()->qty_count;

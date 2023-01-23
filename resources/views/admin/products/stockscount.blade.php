@@ -134,16 +134,18 @@
 				
 				$count=0;
 				$transations=$transations->groupby('stock_id');
+				
 				?>
 				
 				@if(count($transations)>0)
 				@foreach($transations as $key=> $transation)
 				<?php
-					$sum = 0;
+					$sum=0;
 				?>
 					@foreach($transation as $k=> $result)
-					
+
 					<?php
+					
 					$StockIn = 0;
 						$StockOut = 0;
 					?>
@@ -184,11 +186,11 @@
 						<?php
 						$qty=0;
 						?>
-							@if($result->trans_type == 101 || $result->trans_type == 102)	
+							{{-- @if($result->trans_type == 101 || $result->trans_type == 102)	 --}}
 							{{$qty+=$result->qty * $result->unit->qty_count}}
-							@else
+							{{-- @else
 							{{$qty+=$result->qty}}
-							@endif
+							@endif --}}
 						
 						<?php
 						$StockIn +=$qty;
@@ -202,14 +204,14 @@
 						<?php
 						$outqty=0;
 						?>
-							@if($result->trans_type == SALESINVOICE || $result->trans_type == OTHERSALESINVOICE)	
+							{{-- @if($result->trans_type == SALESINVOICE || $result->trans_type == OTHERSALESINVOICE)	 --}}
 							
 							{{ str_ireplace('-','',$outqty+= $result->qty * $result->unit->qty_count)}}
-							@else
+							{{-- @else
 							
 							{{str_ireplace('-','',$outqty+= $result->qty)}}
 							
-							@endif
+							@endif --}}
 						<?php
 						$StockOut +=$outqty;
 						?>

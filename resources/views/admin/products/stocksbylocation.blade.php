@@ -82,8 +82,8 @@
 
           <th class="text-center">In</th>
           <th class="text-center">Out</th>
-          <th class="text-center bg-primary">Closing</th>
-          <th class="text-center bg-primary">Closing</th>
+          <th class="text-center bg-primary">Closing(Bottle-Wise)</th>
+          <th class="text-center bg-primary">Closing(Case-Wise)</th>
 
           <th class="text-center">cost/unit</th>
 
@@ -92,11 +92,13 @@
       <tbody>
         <?php
         $sum = 0;
+        $sumbottlewise=0;
         $StockIn = 0;
         $StockOut = 0;
         ?>
         @if(count($transations)>0)
         @foreach($transations as $result)
+        
         <tr>
           <td align="center">{{$result->id}}</td>
           <td style="font-size: 16.5px" align="left"><a href="/admin/products/{{$result->pid}}/edit?op=trans" target="_blank"> {{$result->pname}}</a></td>
@@ -148,7 +150,10 @@
             -
             @endif
           </td>
-        <td align="center">{{$sumbottlewise += $result->qty * $result->unit->qty_count}}</td>
+          <?php
+            $sumbottlewise += $result->qty * $result->unit->qty_count;
+          ?>
+        <td align="center">{{$sumbottlewise}}</td>
         <?php
         $unitid= \App\Models\Product::where('id', $result->stock_id)->first()->product_unit;
         $unitqty= \App\Models\ProductsUnit::where('id', $unitid)->first()->qty_count;

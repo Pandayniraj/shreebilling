@@ -643,7 +643,6 @@ class ProductController extends Controller
             $q->where('product_stock_moves.trans_type',$trans_type);
         })
         ->orderBy('product_stock_moves.tran_date', 'DESC')
-       
         ->get();
         if ($request->export){
 
@@ -780,7 +779,6 @@ class ProductController extends Controller
         $stockmaster->tran_date = $request->transaction_date;
         $stockmaster->modules = "Stock Adjustments";
         $stockmaster->comment =  " From Stock Adjustment";
-        $stockmaster->reason_id = $stock_adjustment->comments;
         $stockmaster->total_value = $stock_adjustment->total_amount;
         $stockmaster->total_qty = $total_qty;
         $stockmaster->store_id = $request->store_id;
@@ -832,10 +830,10 @@ class ProductController extends Controller
                     $stockMove->location=$request->store_id;
                     if ($request_reason->reason_type == 'positive') {
 
-                        $stockMove->qty =  $quantity[$key]  * StockHelper::getUnitPrice($detail->unit);
+                        $stockMove->qty =  $quantity[$key];
                     } else {
 
-                        $stockMove->qty = '-' . $quantity[$key]  * StockHelper::getUnitPrice($detail->unit);
+                        $stockMove->qty = '-' . $quantity[$key];
                     }
 
 
@@ -1562,11 +1560,6 @@ public function stockLedger(Request $request){
         // ->paginate(50);
 
     $isExcel = false;
-
-
-
-        // dd('');
-
     return view('admin.products.stock-ledger', compact('transations','page_description','page_title','products','purchasePrice','current_product','transations','isExcel'));
 
 }
