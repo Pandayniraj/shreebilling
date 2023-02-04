@@ -97,7 +97,7 @@ table#t01 th {
 }
 </style>
 
-<body onload="window.print();" cz-shortcut-listen="true" class="skin-blue sidebar-mini">
+<body cz-shortcut-listen="true" class="skin-blue sidebar-mini">
 
   <div class='wrapper'>
 @if($print_no > 0)
@@ -251,3 +251,10 @@ table#t01 th {
   </div><!-- /.col -->
 
 </body>
+<script src="{{ asset ("/bower_components/admin-lte/plugins/jQuery/jQuery-2.1.4.min.js") }}"></script>
+<script>
+    $(document).ready(function() {
+        window.print();
+    }); 
+    
+    </script> 

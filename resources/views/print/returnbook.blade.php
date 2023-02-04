@@ -60,7 +60,7 @@
 
     </style>
 </head>
-<body onload="window.print();">
+<body>
     <table style="width:100%; text-align:center; padding: 30px 0; box-shadow: 0 1.2rem 1.8rem 0 rgba(0,0,0,0.24),0 1.7rem 5rem 0 rgba(0,0,0,0.19); -webkit-box-shadow: 0 1.2rem 1.8rem 0 rgba(0,0,0,0.24),0 1.7rem 5rem 0 rgba(0,0,0,0.19); font-family:Gotham, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 10px;">
 
         <thead>
@@ -170,3 +170,10 @@
 
 </body>
 </html>
+<script src="{{ asset ("/bower_components/admin-lte/plugins/jQuery/jQuery-2.1.4.min.js") }}"></script>
+<script>
+    $(document).ready(function() {
+        window.print();
+    }); 
+    
+    </script> 

@@ -339,7 +339,7 @@ class DeliveryNoteController extends Controller
         $page_title="Daily Dispatch Sheet";
         $page_description="Detail-daily report of all product";
        
-        $products= \App\Models\Product::with('unit')->where('product_division', 'raw_material')->select('name', 'id','product_unit')->get();
+    $products= \App\Models\Product::with('unit')->where('product_division', 'raw_material')->select('name', 'id','product_unit')->get();
        $perdaypurchasedetail=\App\Models\StockMove::select(\DB::raw("SUM(CASE WHEN unit_id = 15 THEN qty / 12
        WHEN unit_id = 20 THEN qty / 24 
        ELSE qty
@@ -371,9 +371,8 @@ class DeliveryNoteController extends Controller
         $foropening = \App\Models\StockMove::select(\DB::raw("SUM(CASE WHEN unit_id = 15 THEN qty / 12
         WHEN unit_id = 20 THEN qty / 24 
         ELSE qty
-    END) as removestock, stock_id"))->whereDate('tran_date','<=', \carbon\Carbon::yesterday())->whereIn('trans_type', [401,402])->groupby('stock_id')->get()->groupby('stock_id');
-        
-        $totalremaining=\App\Models\StockMove::select(\DB::raw("SUM(CASE WHEN unit_id = 15 THEN qty / 12
+    END) as removestock, stock_id"))->whereDate('tran_date','<=', \carbon\Carbon::yesterday())->whereIn('trans_type', [401,402, 102, 203])->groupby('stock_id')->get()->groupby('stock_id');     
+    $totalremaining=\App\Models\StockMove::select(\DB::raw("SUM(CASE WHEN unit_id = 15 THEN qty / 12
         WHEN unit_id = 20 THEN qty / 24 
         ELSE qty
     END) as totalremainingqty, stock_id"))->whereDate('tran_date','<=', \carbon\Carbon::yesterday())->whereIn('trans_type', [102, 203])->groupby('stock_id')->get()->groupby('stock_id');

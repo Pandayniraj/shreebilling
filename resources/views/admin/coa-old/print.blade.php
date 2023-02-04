@@ -23,11 +23,8 @@ table.table.table-condensed {
 
 }
 </style>
-<<<<<<< HEAD
-<body  onload="window.print();">
-=======
-<body onload="window.print();" >
->>>>>>> 8812899f3c867877bff01cb11aa47a5bb0b00bab
+
+<body>
 <link href="{{ asset("/bower_components/admin-lte/bootstrap/css/bootstrap.min.css") }}" rel="stylesheet" type="text/css" />
 
 <div class="container">
@@ -141,3 +138,10 @@ table.table.table-condensed {
 </div>
 </body>
 </html>
+<script src="{{ asset ("/bower_components/admin-lte/plugins/jQuery/jQuery-2.1.4.min.js") }}"></script>
+<script>
+    $(document).ready(function() {
+        window.print();
+    }); 
+    
+    </script> 

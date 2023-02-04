@@ -595,7 +595,7 @@ class ProductController extends Controller
         leftjoin('products', 'products.id', '=', 'product_stock_moves.stock_id')
         ->leftjoin('pos_outlets', 'pos_outlets.id', '=', 'product_stock_moves.store_id')
         ->select('product_stock_moves.*', 'products.name as pname', 'pos_outlets.name')
-        ->orderBy('product_stock_moves.tran_date', 'DESC')
+        // ->orderBy('product_stock_moves.tran_date', 'DESC')
         ->where(function ($query) use($current_store) {
             if($current_store!='' && $current_store!=null)
             $query->where('product_stock_moves.store_id', $current_store);
@@ -606,7 +606,6 @@ class ProductController extends Controller
 
         })
         ->get();
-
         $stores = PosOutlets::pluck('name', 'id')->all();
         $products = Product::pluck('name', 'id')->all();
         // dd($store);
@@ -1449,7 +1448,6 @@ class ProductController extends Controller
 
 }
 
-
 public function product_statement(Request $request){
 
     $page_title = 'Product Statement';
@@ -1470,8 +1468,6 @@ public function product_statement(Request $request){
         if($start_date && $end_date){
 
             return $query->whereBetween('tran_date',[$start_date,$end_date]);
-
-
         }
     })
 
@@ -1484,7 +1480,7 @@ public function product_statement(Request $request){
         return \Excel::download(new \App\Exports\ExcelExportFromView($view), 'product_statement.xlsx');
 
     }
-    $transations = $transations->paginate(50);
+    $transations = $transations->get();
 
     $isExcel = false;
     return view('admin.products.statement', compact('transations','page_description','page_title','products','current_product','transations','isExcel'));
@@ -1507,8 +1503,6 @@ public function multipledelete(Request $request){
 
     Flash::error("The selected Products Are Related With Invoice");
 }
-
-
 
 return redirect('/admin/products');
 }

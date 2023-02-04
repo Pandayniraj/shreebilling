@@ -92,12 +92,13 @@
       <tbody>
         <?php
         $sum = 0;
-        $sumbottlewise=0;
         $StockIn = 0;
         $StockOut = 0;
+        $sumbottlewise=0;
         ?>
         @if(count($transations)>0)
         @foreach($transations as $result)
+        
         
         <tr>
           <td align="center">{{$result->id}}</td>

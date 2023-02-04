@@ -112,7 +112,7 @@ img {
 }
 </style>
 
-<body onload="window.print();" cz-shortcut-listen="true" class="skin-blue sidebar-mini">
+<body cz-shortcut-listen="true" class="skin-blue sidebar-mini">
   <?php
 
   $loop = $print_no > 0 ? 1: 2;
@@ -256,3 +256,10 @@ img {
   </div><!-- /.col -->
   @endforeach
 </body>
+<script src="{{ asset ("/bower_components/admin-lte/plugins/jQuery/jQuery-2.1.4.min.js") }}"></script>
+<script>
+    $(document).ready(function() {
+        window.print();
+    }); 
+    
+  </script> 

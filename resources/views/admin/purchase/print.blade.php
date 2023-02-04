@@ -82,7 +82,7 @@ th{
 
 </head>
 
-<body onload="window.print();" cz-shortcut-listen="true" class="skin-blue sidebar-mini">
+<body cz-shortcut-listen="true" class="skin-blue sidebar-mini">
 
     <div class='wrapper'>
 
@@ -290,3 +290,10 @@ th{
     </div><!-- /.col -->
 
 </body>
+<script src="{{ asset ("/bower_components/admin-lte/plugins/jQuery/jQuery-2.1.4.min.js") }}"></script>
+<script>
+    $(document).ready(function() {
+        window.print();
+    }); 
+    
+    </script> 

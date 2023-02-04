@@ -76,7 +76,7 @@
                     </h3>
                 </div>
                 @include('admin.products.product-statement')
-                <div align="center">{!! $transations->render() !!}</div>
+                <div align="center"></div>
             </div>
         </div>
     </div>

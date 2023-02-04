@@ -1307,9 +1307,7 @@ class PurchaseController extends Controller
         $confirm_purchase->update([
             'purchase_type' => 'purchase_orders',
         ]);
-
         Flash::success('Successfully posted to Purchase Order !!');
-
         return \Redirect::back();
     }
 
@@ -1398,7 +1396,6 @@ class PurchaseController extends Controller
                 if (\File::exists('reports/' . $file)) {
                     \File::Delete('reports/' . $file);
                 }
-
                 return $pdf->download($file);
             }
             if ($op == 'excel') {

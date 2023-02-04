@@ -16,7 +16,7 @@
         }
 </style>
 </head>
-<body onload="window.print()">
+<body>
 
 
 <div class='row' style="padding-left: 10px;margin-right: 3px;">
@@ -207,4 +207,10 @@
 
 </body>
 </html>
-
+<script src="{{ asset ("/bower_components/admin-lte/plugins/jQuery/jQuery-2.1.4.min.js") }}"></script>
+<script>
+    $(document).ready(function() {
+        window.print();
+    }); 
+    
+    </script> 

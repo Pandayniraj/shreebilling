@@ -56,7 +56,7 @@ body {-webkit-print-color-adjust: exact;}
     
     </style>
 </head>
-<body onload="window.print();">
+<body>
     <header class="clearfix">
         <table id="customers">
             <tr>
@@ -170,3 +170,10 @@ body {-webkit-print-color-adjust: exact;}
         
 </body>
 </html>
+<script src="{{ asset ("/bower_components/admin-lte/plugins/jQuery/jQuery-2.1.4.min.js") }}"></script>
+<script>
+    $(document).ready(function() {
+        window.print();
+    }); 
+    
+    </script> 

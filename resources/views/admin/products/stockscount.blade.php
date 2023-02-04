@@ -130,13 +130,10 @@
 			</thead>
 			<tbody>
 				<?php
-				
-				
 				$count=0;
 				$transations=$transations->groupby('stock_id');
-				
 				?>
-				
+				dd($transations);
 				@if(count($transations)>0)
 				@foreach($transations as $key=> $transation)
 				<?php
