@@ -416,7 +416,7 @@ class DeliveryNoteController extends Controller
         $foropening = \App\Models\StockMove::select(\DB::raw("SUM(CASE WHEN unit_id = 15 THEN qty / 12
         WHEN unit_id = 20 THEN qty / 24 
         ELSE qty
-    END) as removestock, stock_id"))->whereDate('tran_date','<=', \carbon\Carbon::yesterday())->whereIn('trans_type', [401,402])->groupby('stock_id')->get()->groupby('stock_id');
+    END) as removestock, stock_id"))->whereDate('tran_date','<=', \carbon\Carbon::yesterday())->whereIn('trans_type', [401,402, 102, 203])->groupby('stock_id')->get()->groupby('stock_id');
         
         $totalremaining=\App\Models\StockMove::select(\DB::raw("SUM(CASE WHEN unit_id = 15 THEN qty / 12
         WHEN unit_id = 20 THEN qty / 24 

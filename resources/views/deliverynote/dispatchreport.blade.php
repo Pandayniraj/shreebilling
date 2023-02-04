@@ -109,17 +109,9 @@
                         $foropening[$product->id][0]->removestock < 0 ||
                             $foropening[$product->id][0]->removestock > 0 ||
                             $foropening[$product->id][0]->removestock == 0)
-                        @if (
-                            $totalremaining[$product->id][0]->totalremainingqty == null ||
-                                $totalremaining[$product->id][0]->totalremainingqty == '')
-                            <?php
-                            $openingvalue = $foropening[$product->id][0]->removestock + 0;
-                            ?>
-                        @else
                             <?php
                             $openingvalue = $foropening[$product->id][0]->removestock;
                             ?>
-                        @endif
                         <?php
                         $totalopeningvalue += $openingvalue;
                         ?>
@@ -193,7 +185,7 @@
                             ?>
                         @else
                             <?php
-                            $openingvalue = $asopeningstock[$product->id][0]->asopeningstock + $totalremaining[$product->id][0]->totalremainingqty;
+                            $openingvalue = $asopeningstock[$product->id][0]->asopeningstock + $foropening[$product->id][0]->removestock;
                             ?>
                         @endif
                         <?php (float) $openingvalue;
@@ -203,17 +195,9 @@
                         $foropening[$product->id][0]->removestock < 0 ||
                             $foropening[$product->id][0]->removestock > 0 ||
                             $foropening[$product->id][0]->removestock == 0)
-                        @if (
-                            $totalremaining[$product->id][0]->totalremainingqty == null ||
-                                $totalremaining[$product->id][0]->totalremainingqty == '')
-                            <?php
-                            $openingvalue = $foropening[$product->id][0]->removestock + 0;
-                            ?>
-                        @else
                             <?php
                             $openingvalue = $foropening[$product->id][0]->removestock ;
                             ?>
-                        @endif
                         <?php
                         $totalopeningvalue += $openingvalue;
                         ?>
